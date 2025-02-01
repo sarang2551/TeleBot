@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeleBot", "TeleBot\TeleBot.csproj", "{4DCA471A-3531-4C1A-9E66-856A84F9FDC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LLMModel", "LLMModel\LLMModel.csproj", "{7C3D2714-4243-4D94-9944-83728997A343}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DCA471A-3531-4C1A-9E66-856A84F9FDC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DCA471A-3531-4C1A-9E66-856A84F9FDC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DCA471A-3531-4C1A-9E66-856A84F9FDC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DCA471A-3531-4C1A-9E66-856A84F9FDC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C3D2714-4243-4D94-9944-83728997A343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C3D2714-4243-4D94-9944-83728997A343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C3D2714-4243-4D94-9944-83728997A343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C3D2714-4243-4D94-9944-83728997A343}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
