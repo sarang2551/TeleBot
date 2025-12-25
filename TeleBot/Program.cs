@@ -1,15 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Extensions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using Newtonsoft.Json;
 using TeleBot;
 using TeleBot.Model;
 using TeleBot.Services;
-
+// TODO: There is a need to inject environment variables during build time instead of reading the file during runtime
 var jsonText = File.ReadAllText("appsettings.json");
 var config = JsonConvert.DeserializeObject<EnvSettings>(jsonText);
 if (config == null)

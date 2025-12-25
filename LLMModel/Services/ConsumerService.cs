@@ -52,9 +52,9 @@ public class ConsumerService : BackgroundService
                     else
                     {
                         Console.WriteLine("ModelService: Received message from topic " + message.Topic + " processing ...");
-                      var modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
+                      string modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
                       Console.WriteLine("ModelService: Response from LLM: " + modelResponse);
-                      var response = new MessageRequest()
+                      var response = new MessageRequest
                       {
                           content = modelResponse, message_id = message.Message.Value.message_id,
                           chat_id = message.Message.Value.chat_id
