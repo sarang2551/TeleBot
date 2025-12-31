@@ -1,1 +1,39 @@
-﻿name: ProjectTeleBot
+﻿version: "3.9"
+name: AITeleBot
+services:
+  llmmodel:
+    build:
+      context: ./LLMModel
+      dockerfile: Dockerfile
+    container_name: llmmodel
+    ports:
+      - "8000:8000"
+    depends_on:
+      - kafka
+
+  telebot:
+    build:
+      context: ./TeleBot
+      dockerfile: Dockerfile
+    container_name: telebot
+    ports:
+      - "8001:8001"
+    depends_on:
+      - kafka
+      - llmmodel
+
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+        
+  kafka-init:
+    image: apache/kafka:latest
+    depends_on:
+      - kafka
+    entrypoint: >
+      sh -c "
+      /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic model_to_bot --partitions 1 --replication-factor 1 &&
+      /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic bot_to_model --partitions 1 --replication-factor 1
+      "      
