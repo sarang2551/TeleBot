@@ -27,6 +27,7 @@ public class ConsumerService : BackgroundService
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            Console.WriteLine("Starting Consumer ... to consume on topic " +  _configuration.Env.Kafka.ConsumerTopic);
             return StartConsuming(stoppingToken);
         }
 
@@ -48,6 +49,7 @@ public class ConsumerService : BackgroundService
                     }
                     else
                     {
+                        Console.WriteLine($"Consumer Service: Consumed message content {message.Message.Value.content}");
                         await _botClient.SendMessage(message.Message.Value.chat_id, message.Message.Value.content, cancellationToken:token);
                     }
                    

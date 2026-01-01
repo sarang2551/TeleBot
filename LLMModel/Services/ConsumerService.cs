@@ -31,6 +31,7 @@ public class ConsumerService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        Console.WriteLine($"Consumer service started at {DateTime.Now} to topic {_configuration.Env.Kafka.ConsumerTopic}");
         return StartConsuming(stoppingToken);
     }
 
@@ -51,7 +52,7 @@ public class ConsumerService : BackgroundService
                     }
                     else
                     {
-                        Console.WriteLine("ModelService: Received message from topic " + message.Topic + " processing ...");
+                      Console.WriteLine("ModelService: Received message from topic " + message.Topic + " processing ...");
                       string modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
                       Console.WriteLine("ModelService: Response from LLM: " + modelResponse);
                       var response = new MessageRequest
@@ -59,7 +60,7 @@ public class ConsumerService : BackgroundService
                           content = modelResponse, message_id = message.Message.Value.message_id,
                           chat_id = message.Message.Value.chat_id
                       };
-                      await _producer.ProduceAsync(response).WaitAsync(cancellationToken: token);
+                      await _producer.ProduceAsync(response);
                       
                     }
                    

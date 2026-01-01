@@ -117,7 +117,7 @@ public class MistralModelService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.StackTrace);
+            Console.WriteLine("MistralModelService: " + e.Message);
             return null;
         }
     }
