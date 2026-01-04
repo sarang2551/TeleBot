@@ -9,7 +9,10 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
 
   telebot:
     build:
@@ -19,21 +22,32 @@ services:
     ports:
       - "8001:8001"
     depends_on:
-      - kafka
-      - llmmodel
+      kafka:
+        condition: service_healthy
+      llmmodel:
+        condition: service_started
+    environment:
+      - KAFKA_BOOTSTRAP_SERVER=kafka:9092
 
   kafka:
     image: apache/kafka:latest
     container_name: kafka
     ports:
       - "9092:9092"
-        
-  kafka-init:
-    image: apache/kafka:latest
-    depends_on:
-      - kafka
-    entrypoint: >
-      sh -c "
-      /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic model_to_bot --partitions 1 --replication-factor 1 &&
-      /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists --topic bot_to_model --partitions 1 --replication-factor 1
-      "      
+    environment:
+      - KAFKA_NODE_ID=1
+      - KAFKA_PROCESS_ROLES=broker,controller
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

@@ -15,6 +15,9 @@ if (config == null)
     return;
 }
 
+config.Env.Kafka.BootstrapServers =
+    Environment.GetEnvironmentVariable("KAFKA_BOOTSTRAP_SERVER") ?? config.Env.Kafka.BootstrapServers;
+
 using var cts = new CancellationTokenSource();
 var bot = new TelegramBotClient(config.Env.BOT_TOKEN!,cancellationToken:cts.Token);
 var me = await bot.GetMe();
@@ -25,16 +28,23 @@ var consumerService = new ConsumerService(config,bot);
 _ = Task.Run(async () => await consumerService.StartAsync(CancellationToken.None));
 // Blocking task requires cancellation token to exit main thread
 bot.OnMessage += CustomOnMessageHandler;
-Console.WriteLine($"Started bot {me.Username}... press Enter to stop");
-Console.ReadLine();
-Console.WriteLine("Stopping...");
+Console.WriteLine($"[TeleBot Service] Started bot {me.Username} at {DateTime.Now}");
+
+try
+{
+    await Task.Delay(Timeout.Infinite, cts.Token);
+}
+catch (OperationCanceledException)
+{
+    Console.WriteLine($"[TeleBot Service] Stopped at {DateTime.Now}");
+}
 
 cts.Cancel();
 
 async Task CustomOnMessageHandler(Message message,UpdateType updateType)
 {
     if (message.Text == null) return;
-    Console.WriteLine($"Received message: {message.Text} from user: {message.From?.Username}");
+    Console.WriteLine($"[TeleBot Service] Received message: {message.Text} from user: {message.From?.Username}");
     
     string response;
     var command =  message.Text.Split(" ")[0];
@@ -54,14 +64,14 @@ async Task CustomOnMessageHandler(Message message,UpdateType updateType)
             break;
         case "/calendar":
             var naturalLanguageMessage = message.Text.Substring(command.Length + 1);
-            Console.WriteLine($"Received calendar event request: {naturalLanguageMessage}");
+            Console.WriteLine($"[TeleBot Service] Received calendar event request: {naturalLanguageMessage}");
             MessageRequest request = new MessageRequest
             {
                 content = naturalLanguageMessage,
                 message_id = message.MessageId.ToString(),
                 chat_id = message.Chat.Id
             };
-            await producerService.ProduceAsync(config.Env.Kafka.ProducerTopic, request);
+            await producerService.ProduceAsync(request);
             break;
         default:
             await bot.SendMessage(message.Chat, $"Command {command} not recognized");

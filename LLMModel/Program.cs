@@ -1,5 +1,4 @@
 using LLMModel;
-using LLMModel.Model;
 using LLMModel.Services;
 using Newtonsoft.Json;
 using TeleBot.Services;
@@ -11,6 +10,10 @@ if (config == null)
     Console.WriteLine("Failed to load config");
     return;
 }
+
+config.Env.Kafka.BootstrapServers =
+    Environment.GetEnvironmentVariable("KAFKA_BOOTSTRAP_SERVER") ?? config.Env.Kafka.BootstrapServers;
+
 using var cts = new CancellationTokenSource();
 
 var kafkaInitializerService = new KafkaInitializerService(config);
@@ -18,14 +21,18 @@ await kafkaInitializerService.init();
 
 var producer = new ProducerService(config);
 var consumer = new ConsumerService(config,producer);
-// Instead of tight coupling via a POST request the LLMMOdel service will be lousy coupled by consuming messages from the TeleBot service instead
-var consumerTask = consumer.StartAsync(cts.Token);
+// background thread task
+var consumerTask = Task.Run(async () => await consumer.StartConsuming(CancellationToken.None));
 
-Console.WriteLine("LLM Model service started. Press Enter to stop...\n");
-Console.ReadLine();
-
-Console.WriteLine("Stopping...");
-cts.Cancel();
+Console.WriteLine($"[LLM Model Service] Started at {DateTime.Now} \n");
+try
+{
+    await Task.Delay(Timeout.Infinite, cts.Token);
+}
+catch (OperationCanceledException)
+{
+    Console.WriteLine("[LLM Model Service] Shutdown signal received, stopping...");
+}
 
 // Wait for consumer to finish gracefully
 try
@@ -34,8 +41,7 @@ try
 }
 catch (OperationCanceledException)
 {
-    Console.WriteLine("Consumer stopped");
+    Console.WriteLine("[LLM Model Service] Consumer stopped");
 }
 
-Console.WriteLine("Application stopped");
-
+Console.WriteLine("[LLM Model Service] Application stopped");

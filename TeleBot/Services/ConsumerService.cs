@@ -27,7 +27,7 @@ public class ConsumerService : BackgroundService
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Console.WriteLine("Starting Consumer ... to consume on topic " +  _configuration.Env.Kafka.ConsumerTopic);
+            Console.WriteLine($"[ConsumerService] Started at {DateTime.Now}");
             return StartConsuming(stoppingToken);
         }
 
@@ -38,6 +38,7 @@ public class ConsumerService : BackgroundService
         try
         {
             _consumer.Subscribe(_configuration.Env.Kafka.ConsumerTopic);
+            Console.WriteLine("[Consumer Service] Subscribed to topic " + _configuration.Env.Kafka.ConsumerTopic);
             while (!token.IsCancellationRequested)
             {
                 try
@@ -45,31 +46,29 @@ public class ConsumerService : BackgroundService
                     var message = _consumer.Consume(token);
                     if (message == null)
                     {
-                        Console.WriteLine("received null message");
+                        Console.WriteLine("[Consumer Service] received null message");
                     }
                     else
                     {
-                        Console.WriteLine($"Consumer Service: Consumed message content {message.Message.Value.content}");
+                        Console.WriteLine($"[Consumer Service] Consumed message content {message.Message.Value.content}");
                         await _botClient.SendMessage(message.Message.Value.chat_id, message.Message.Value.content, cancellationToken:token);
                     }
                    
                 }
                 catch (Exception e)
                 {
-                    // Print the actual exception message, not just stack trace
-                    Console.WriteLine($"Error processing message: {e.Message}");
-                    Console.WriteLine($"Stack trace: {e.StackTrace}");
-    
-                    // If it's an inner exception, print that too
+                    Console.WriteLine($"[Consumer Service] Error processing message: {e.Message}");
+                    
                     if (e.InnerException != null)
                     {
-                        Console.WriteLine($"Inner exception: {e.InnerException.Message}");
+                        Console.WriteLine($"[Consumer Service]  Inner exception: {e.InnerException.Message}");
                     }
                 }            
             }
         }
         finally
         {
+            Console.WriteLine($"[Consumer Service] Stopped at {DateTime.Now}");
             _consumer.Close();
         }
     }

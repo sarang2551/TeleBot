@@ -14,7 +14,7 @@ public class ProducerService
         _configuration = configuration;
         var producerConfig = new ProducerConfig()
         {
-            BootstrapServers = _configuration.Env.Kafka.BootstrapServers // [ localhost:9092]
+            BootstrapServers = _configuration.Env.Kafka.BootstrapServers
         };
         _producer = new ProducerBuilder<Null, MessageRequest>(producerConfig).SetValueSerializer(new MessageRequestSerializer()).Build();
     }

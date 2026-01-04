@@ -31,7 +31,7 @@ public class ConsumerService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine($"Consumer service started at {DateTime.Now} to topic {_configuration.Env.Kafka.ConsumerTopic}");
+        Console.WriteLine($"[ConsumerService] Started at {DateTime.Now}");
         return StartConsuming(stoppingToken);
     }
 
@@ -41,6 +41,7 @@ public class ConsumerService : BackgroundService
         try
         {
             _consumer.Subscribe(_configuration.Env.Kafka.ConsumerTopic);
+            Console.WriteLine("[Consumer Service] Subscribed to topic " + _configuration.Env.Kafka.ConsumerTopic);
             while (!token.IsCancellationRequested)
             {
                 try
@@ -48,31 +49,41 @@ public class ConsumerService : BackgroundService
                     var message = _consumer.Consume(token);
                     if (message == null)
                     {
-                        Console.WriteLine("received null message");
+                        Console.WriteLine("[ConsumerService] received null message");
                     }
                     else
                     {
-                      Console.WriteLine("ModelService: Received message from topic " + message.Topic + " processing ...");
-                      string modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
-                      Console.WriteLine("ModelService: Response from LLM: " + modelResponse);
-                      var response = new MessageRequest
-                      {
-                          content = modelResponse, message_id = message.Message.Value.message_id,
-                          chat_id = message.Message.Value.chat_id
-                      };
-                      await _producer.ProduceAsync(response);
-                      
+                        Console.WriteLine("[ConsumerService] Received message from topic " + message.Topic +
+                                          " processing ...");
+                        string modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
+                        Console.WriteLine("[ConsumerService] Response from LLM: " + modelResponse);
+                        var response = new MessageRequest
+                        {
+                            content = modelResponse, message_id = message.Message.Value.message_id,
+                            chat_id = message.Message.Value.chat_id
+                        };
+                        await _producer.ProduceAsync(response);
+
                     }
-                   
+
+                }
+                catch (ConsumeException e)
+                {
+                    Console.WriteLine("[ConsumerService] Consume error: " + e.Error.Reason);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error processing message " + e.StackTrace);
+                    Console.WriteLine("[ConsumerService] Error processing message " + e.StackTrace);
                 }            
             }
+        } catch (Exception ex)
+        {
+            Console.WriteLine($"[Consumer Service] Fatal error in consumer: {ex.Message}");
+            Console.WriteLine($"[Consumer Service] StackTrace: {ex.StackTrace}");
         }
         finally
         {
+            Console.WriteLine($"[ConsumerService] Stopped at {DateTime.Now}");
             _consumer.Close();
         }
     }
