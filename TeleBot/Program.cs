@@ -19,7 +19,7 @@ config.Env.Kafka.BootstrapServers =
     Environment.GetEnvironmentVariable("KAFKA_BOOTSTRAP_SERVER") ?? config.Env.Kafka.BootstrapServers;
 
 using var cts = new CancellationTokenSource();
-var bot = new TelegramBotClient(config.Env.BOT_TOKEN!,cancellationToken:cts.Token);
+var bot = new TelegramBotClient(config.Env.BOT_TOKEN,cancellationToken:cts.Token);
 var me = await bot.GetMe();
 
 var producerService = new ProducerService(config);
@@ -72,6 +72,14 @@ async Task CustomOnMessageHandler(Message message,UpdateType updateType)
                 chat_id = message.Chat.Id
             };
             await producerService.ProduceAsync(request);
+            break;
+        case "/word":
+            // word game: provide the meaning and example --> I guess the word 
+            // if I guess the word wrong then the difficulty of the word increases 
+            // more difficult words appear more frequently (algorithm to implement this logic is required because simple sorting would be too repetitive)
+            break;
+        case "/addWord":
+            // add a word using an API to get the definition and example use
             break;
         default:
             await bot.SendMessage(message.Chat, $"Command {command} not recognized");
