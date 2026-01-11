@@ -1,0 +1,672 @@
+[
+    {
+        "word": "melancholy",
+        "definition": "a feeling of pensive sadness, typically with no obvious cause",
+        "example": "an air of melancholy surrounded him"
+    },
+    {
+        "word": "pensive",
+        "definition": "engaged in, involving, or reflecting deep or serious thought",
+        "example": "a pensive mood"
+    },
+    {
+        "word": "polemic",
+        "definition": "a speech or piece of writing expressing a strongly critical attack on or controversial opinion about someone or something",
+        "example": "his polemic against that article"
+    },
+    {
+        "word": "invariably",
+        "definition": "in every case or on every occasion",
+        "example": "ranch meals are invariably hearty and fulfilling"
+    },
+    {
+        "word": "incongruous",
+        "definition": "not in harmony or keeping with the surroundings or other aspects of something",
+        "example": "duffel coat looked incongruous with the black dress she wore"
+    },
+    {
+        "word": "stridently",
+        "definition": "in an extremely forceful way",
+        "example": "I stridently opposed the merger"
+    },
+    {
+        "word": "pestilential",
+        "definition": "annoying",
+        "example": "a pestilential person"
+    },
+    {
+        "word": "derisively",
+        "definition": "in a manner expressing contempt or ridicule.",
+        "example": "she snorted derisively at him"
+    },
+    {
+        "word": "contempt",
+        "definition": "the feeling that a person or a thing is worthless or beneath consideration",
+        "example": "he stared at her with total contempt"
+    },
+    {
+        "word": "plaudits",
+        "definition": "an expression of praise or approval",
+        "example": "the network has received plaudits for its sports coverage"
+    },
+    {
+        "word": "pugnacity",
+        "definition": "the quality of wanting to start an argument or fight, or of expressing an argument or opinion very forcefully",
+        "example": "His pugnacity and controversial practices had made him unpopular"
+    },
+    {
+        "word": "tacit",
+        "definition": "understood or implied without being stated",
+        "example": "silence is tacit agreement"
+    },
+    {
+        "word": "aphorism",
+        "definition": "a pithy observation which contains a general truth",
+        "example": "the old aphorism 'the child is father to the man'"
+    },
+    {
+        "word": "pithy",
+        "definition": "vigorously expressive",
+        "example": "his characteristically pithy comments"
+    },
+    {
+        "word": "bereaved",
+        "definition": "deprived of a close relation or friend through their death",
+        "example": "bereaved families"
+    },
+    {
+        "word": "patronizing",
+        "definition": "apparently kind or helpful but betraying a feeling of superiority",
+        "example": "experienced patronizing attitudes from staff"
+    },
+    {
+        "word": "condescension",
+        "definition": "an attitude of patronizing",
+        "example": "a tone of condescension"
+    },
+    {
+        "word": "inveighed",
+        "definition": "speak or write about (something) with great hostility",
+        "example": "he liked to inveigh against all forms of academic training"
+    },
+    {
+        "word": "dissents",
+        "definition": "the holding or expression of opinions at variance with those commonly or officially held",
+        "example": "there was no dissent from this view"
+    },
+    {
+        "word": "congregation",
+        "definition": "a group of people assembled for religious worship",
+        "example": "the singing of psalms by the whole congregation"
+    },
+    {
+        "word": "aghast",
+        "definition": "filled with horror or shock",
+        "example": "she winced, aghast at his cruelty"
+    },
+    {
+        "word": "flogging",
+        "definition": "a punishment in which the victim is hit repeatedly with a whip or stick",
+        "example": "public flogging"
+    },
+    {
+        "word": "expurgated",
+        "definition": "having had objectionable or unsuitable matter removed",
+        "example": "an expurgated English translation"
+    },
+    {
+        "word": "effrontery",
+        "definition": "insolent and impertinent behavior",
+        "example": "one juror had the effrontery to challenge the coroner's decision"
+    },
+    {
+        "word": "agnosticism",
+        "definition": "The belief that nothing is known or can be known of the existence or nature of God",
+        "example": "\"She embraced agnosticism, believing that the existence of a higher power is ultimately unknowable.\""
+    },
+    {
+        "word": "ubiquitous",
+        "definition": "present, appearing, or found everywhere",
+        "example": "\"The smell of freshly brewed coffee is ubiquitous in this neighborhood.\""
+    },
+    {
+        "word": "wince",
+        "definition": "make a slight involuntary grimace or shrinking movement of the body out of pain or distress",
+        "example": "She winced as the doctor touched her bruised arm."
+    },
+    {
+        "word": "usurped",
+        "definition": "take (a position of power or importance) unlawfully or by force",
+        "example": "The dictator usurped the throne from the rightful heir."
+    },
+    {
+        "word": "assiduously",
+        "definition": "with great care and perseverance",
+        "example": "She assiduously prepared for her exams, ensuring she covered every topic thoroughly."
+    },
+    {
+        "word": "disquieted",
+        "definition": "make (someone) worried or uneasy",
+        "example": "The sudden noise disquieted the peaceful atmosphere of the library."
+    },
+    {
+        "word": "coaxed",
+        "definition": "gently and persistently persuade (someone) to do something",
+        "example": "She coaxed the shy kitten out from under the bed with a gentle voice and a treat."
+    },
+    {
+        "word": "microcosm",
+        "definition": "a community, place, or situation regarded as encapsulating in miniature the characteristics of something much larger.",
+        "example": "the city is a microcosm of modern Malaysia"
+    },
+    {
+        "word": "rapt",
+        "definition": "Rapt: Fully absorbed or engrossed; enthralled.",
+        "example": "The audience was rapt as the magician performed his final trick."
+    },
+    {
+        "word": "staunch",
+        "definition": "**Staunch**: Firmly loyal, steadfast, or unwavering in support or opposition. (e.g., \"She was a staunch supporter of the cause.\")",
+        "example": "Despite the heavy rain, he remained a staunch supporter of the outdoor event."
+    },
+    {
+        "word": "assailed",
+        "definition": "Assailed: To attack or criticize someone or something violently or aggressively.",
+        "example": "The politician was assailed with questions from the press."
+    },
+    {
+        "word": "abject",
+        "definition": "**Abject**: (adjective) Extremely unpleasant, miserable, or hopeless; showing or expressing self-deprecation or humiliation.",
+        "example": "The refugees lived in abject poverty, with barely any food or shelter."
+    },
+    {
+        "word": "aberrations",
+        "definition": "Aberrations: Deviations from what is normal or expected, often implying something is irregular or abnormal.",
+        "example": "Scientists studied the aberrations in the crystal structure to understand its unique properties."
+    },
+    {
+        "word": "abject",
+        "definition": "**Abject**: (adjective) Extremely unpleasant, miserable, or hopeless; showing or expressing self-hatred or shame.",
+        "example": "The refugees lived in abject poverty, struggling to find even basic necessities."
+    },
+    {
+        "word": "fallacious",
+        "definition": "**Fallacious**: Containing or based on a fallacy; misleading or deceptive.",
+        "example": "The argument was fallacious, relying on misleading data to support its conclusion."
+    },
+    {
+        "word": "indignant",
+        "definition": "Indignant: Feeling or showing anger or annoyance at what is perceived as unfair treatment.",
+        "example": "She was indignant when her ideas were dismissed without consideration."
+    },
+    {
+        "word": "theist",
+        "definition": "A theist is a person who believes in the existence of one or more deities.",
+        "example": "Theist believes in the existence of a supreme being or deity."
+    },
+    {
+        "word": "deist",
+        "definition": "A deist is a person who believes in the existence of a supreme being or god, but does not necessarily believe in a specific religion or religious doctrine. Deists typically believe in a non-intervening creator who designed the universe but does not interact with it.",
+        "example": "As a deist, he believed in a supreme being but not in organized religion."
+    },
+    {
+        "word": "pantheists",
+        "definition": "Pantheists are individuals who believe that the divine or God is synonymous with the universe itself, rather than being a separate entity.",
+        "example": "Pantheists believe that the universe itself is divine."
+    },
+    {
+        "word": "capricious",
+        "definition": "**Capricious**: Given to sudden and unaccountable changes of mood or behavior; impulsive and unpredictable.",
+        "example": "The capricious weather changed from sunshine to hail in a matter of minutes."
+    },
+    {
+        "word": "sublimity",
+        "definition": "Sublimity is the quality of being sublime, which means inspiring awe or reverence, often due to grandeur, majesty, or beauty. It can also refer to the highest point of moral or spiritual elevation.",
+        "example": "The sublimity of the mountain peak left us all in awe."
+    },
+    {
+        "word": "bedevil",
+        "definition": "To \"bedevil\" means to harass, trouble, or perplex someone or something persistently.",
+        "example": "Sure, here's a concise example sentence using the word \"bedevil\":\n\n\"The mysterious noise began to bedevil her thoughts, keeping her awake all night.\""
+    },
+    {
+        "word": "furor",
+        "definition": "Furor: A state of great excitement, commotion, or wild disorder.",
+        "example": "The new policy sparked a furor among the student body."
+    },
+    {
+        "word": "overweening",
+        "definition": "Overweening: Excessively prideful or self-important; arrogant.",
+        "example": "His overweening ambition led him to make reckless decisions."
+    },
+    {
+        "word": "conscientious",
+        "definition": "**Conscientious**: Adhering to moral principles; diligent and thorough in one's work or duties.",
+        "example": "She was a conscientious student, always ensuring her work was thorough and accurate."
+    },
+    {
+        "word": "pusillanimous",
+        "definition": "Pusillanimous: Lacking courage or resolution; cowardly.",
+        "example": "The pusillanimous employee failed to report the misconduct, fearing retaliation."
+    },
+    {
+        "word": "inarticulate",
+        "definition": "Inarticulate: Unable to express oneself clearly or effectively; lacking fluency or coherence in speech or writing.",
+        "example": "Despite his inarticulate attempts to explain, she couldn't understand his point."
+    },
+    {
+        "word": "euphemized",
+        "definition": "\"Euphemized\" refers to the act of substituting a mild, indirect, or vague expression for one that is considered harsh, blunt, or offensive. It is the past tense of \"euphemize,\" which means to replace a word or phrase with a less offensive or more polite alternative.",
+        "example": "The company's policy of downsizing was a euphemized way of saying they were firing employees."
+    },
+    {
+        "word": "bowdlerized",
+        "definition": "Bowdlerized: To expurgate or edit a text to remove or modify content considered offensive, vulgar, or otherwise inappropriate.",
+        "example": "The original text was heavily bowdlerized to make it suitable for younger readers."
+    },
+    {
+        "word": "sectarian",
+        "definition": "**Sectarian**: Relating to or characteristic of a sect or sects, often implying narrow-mindedness, bigotry, or division based on religious, political, or other beliefs.",
+        "example": "The sectarian violence in the region has been escalating for months."
+    },
+    {
+        "word": "conscionable",
+        "definition": "\"Conscionable\" means done or acting in accordance with what one considers to be right or proper; ethical or principled. It can also mean reasonable or fair.",
+        "example": "It would be unconscionable to take advantage of someone in their time of need."
+    },
+    {
+        "word": "indignation",
+        "definition": "Indignation is a feeling of anger or annoyance at what is perceived as unfair treatment.",
+        "example": "Her face flushed with indignation as she listened to the unfair accusations."
+    },
+    {
+        "word": "tendentious",
+        "definition": "**Tendentious**: Expressing or intending to promote a particular agenda or point of view; biased or controversial.",
+        "example": "The politician's tendentious remarks were designed to sway public opinion rather than inform it."
+    },
+    {
+        "word": "ignominious",
+        "definition": "**Ignominious**: Deserving or causing public disgrace or shame; dishonorable.",
+        "example": "The team suffered an ignominious defeat, losing every match in the tournament."
+    },
+    {
+        "word": "irreconcilable",
+        "definition": "**Irreconcilable**: Incapable of being made compatible or consistent; unable to be resolved or reconciled.",
+        "example": "Despite their efforts, the couple's differences proved irreconcilable, leading to their decision to divorce."
+    },
+    {
+        "word": "affronts",
+        "definition": "\"Affronts\" are actions or remarks that cause offense, insult, or disrespect.",
+        "example": "His constant rudeness affronts everyone in the office."
+    },
+    {
+        "word": "daubs",
+        "definition": "\"Daubs\" is a verb that means to apply something, typically paint or a similar substance, in a rough or careless manner. It can also refer to a rough or careless application of such a substance.",
+        "example": "She carelessly daubs paint onto the canvas, creating an abstract masterpiece."
+    },
+    {
+        "word": "filicidal",
+        "definition": "Filicidal: Relating to or characterized by the act of killing one's own child or children.",
+        "example": "The detective was shocked by the filicidal nature of the crime."
+    },
+    {
+        "word": "pestilential",
+        "definition": "**Pestilential** (adjective): Causing or spreading disease, infectious, or harmful. It can also describe something that is extremely unpleasant or annoying.",
+        "example": "The pestilential air in the crowded, unsanitary streets spread disease rapidly."
+    },
+    {
+        "word": "megalomaniac",
+        "definition": "A megalomaniac is an individual with an obsessive desire for power, control, or influence, often accompanied by delusions of grandeur and an inflated sense of self-importance.",
+        "example": "The megalomaniac dictator dreamed of conquering the entire world."
+    },
+    {
+        "word": "sadomasochistic",
+        "definition": "'Sadomasochistic' refers to the derivation of pleasure or satisfaction from inflicting or receiving pain or humiliation, often in a consensual sexual context. It combines the concepts of sadism (pleasure from inflicting pain) and masochism (pleasure from receiving pain).",
+        "example": "His sadomasochistic tendencies led him to enjoy both inflicting and receiving pain."
+    },
+    {
+        "word": "capriciously",
+        "definition": "\"Capriciously\" is an adverb that means acting or done in a whimsical, impulsive, or unpredictable manner, often without apparent reason or external influence. It is derived from the adjective \"capricious,\" which describes someone or something as given to sudden and unaccountable changes of mood or behavior.",
+        "example": "The king decided to change the laws capriciously, leaving his subjects in a state of constant uncertainty."
+    },
+    {
+        "word": "contrived",
+        "definition": "**Contrived**: Artificially or unnaturally created, often appearing forced or unconvincing.",
+        "example": "The plot of that movie was contrived and predictable."
+    },
+    {
+        "word": "insipidly",
+        "definition": "**Insipidly**: In a dull, uninteresting, or flavorless manner.",
+        "example": "The speaker delivered his remarks insipidly, leaving the audience unengaged and yawning."
+    },
+    {
+        "word": "mawkishly",
+        "definition": "Mawkishly is an adverb that means in a way that is overly sentimental, insincere, or excessively emotional. It describes actions or behaviors that are perceived as sickly sweet or cloying.",
+        "example": "She mawkishly clung to her childhood teddy bear, even as an adult."
+    },
+    {
+        "word": "pernicious",
+        "definition": "**Pernicious**: Having a harmful effect, especially in a gradual or subtle way.",
+        "example": "The pernicious rumors spread quickly through the small town, causing unnecessary panic."
+    },
+    {
+        "word": "animisms",
+        "definition": "Animisms are beliefs or practices that attribute spiritual essence or sentience to natural objects, phenomena, or creatures.",
+        "example": "Many indigenous cultures practice animisms, attributing spirits to natural phenomena and objects."
+    },
+    {
+        "word": "conjecture",
+        "definition": "Conjecture: An opinion or conclusion formed on the basis of incomplete information, or a guess based on incomplete evidence or imperfect knowledge.",
+        "example": "The detective's conjecture about the suspect's motives was later proven correct."
+    },
+    {
+        "word": "obscurantist",
+        "definition": "An obscurantist is a person who deliberately obstructs the spread of knowledge, critical thinking, or enlightenment, often by promoting deliberate obscurity, confusion, or misinformation.",
+        "example": "The professor was criticized for his obscurantist approach to teaching, as he deliberately made the subject more confusing than it needed to be."
+    },
+    {
+        "word": "unintelligible",
+        "definition": "**Unintelligible**: Not clear enough to be understood; incomprehensible.",
+        "example": "The doctor's handwriting was so poor that the prescription was completely unintelligible."
+    },
+    {
+        "word": "heaped",
+        "definition": "\"Heap\" is a verb that means to pile or accumulate in a heap, which is a pile or mass of things put or lying one on another. When something is \"heaped,\" it has been piled up or accumulated in such a manner. For example, \"She heaped the laundry on the bed.\"",
+        "example": "Sure, here's a concise example sentence using the word \"heaped\":\n\n\"The children heaped praise on their teacher for the fun field trip.\""
+    },
+    {
+        "word": "intercessory",
+        "definition": "Intercessory: Relating to or involving intercession, or the act of intervening on behalf of another, typically in prayer or mediation.",
+        "example": "She offered an intercessory prayer for her friend's recovery."
+    },
+    {
+        "word": "nonchalance",
+        "definition": "Nonchalance is a demeanor of calm indifference, often appearing as a lack of concern, interest, or enthusiasm.",
+        "example": "Despite the chaos around him, he maintained an air of nonchalance, sipping his coffee as if nothing was amiss."
+    },
+    {
+        "word": "kitsch",
+        "definition": "Kitsch refers to art, objects, or design considered to be in poor taste because of excessive garishness or sentimentality. It often prioritizes immediate appeal over aesthetic value.",
+        "example": "The souvenir shop was filled with kitschy trinkets and tacky memorabilia."
+    },
+    {
+        "word": "hankerings",
+        "definition": "Hankerings: Strong, often inexplicable desires or cravings for something.",
+        "example": "I often have hankerings for the sweet treats of my childhood."
+    },
+    {
+        "word": "brevity",
+        "definition": "Brevity is the quality of being brief, concise, or succinct in speech or writing.",
+        "example": "Her speech was praised for its brevity and clarity."
+    },
+    {
+        "word": "dizzily",
+        "definition": "Dizzily: In a manner that causes or indicates a feeling of spinning around and losing one's balance; lightheadedly.",
+        "example": "After spinning around, she walked away dizzily, clutching her head."
+    },
+    {
+        "word": "decry",
+        "definition": "To decry is to criticize or denounce something openly and strongly.",
+        "example": "The government sought to decry the negative impact of the new policy on the economy."
+    },
+    {
+        "word": "impinges",
+        "definition": "To impinge means to encroach, infringe, or have an impact on something, often in an unwelcome or intrusive manner. It can also mean to strike or collide with something.",
+        "example": "The noise from the construction site impinges on our peace and quiet."
+    },
+    {
+        "word": "delinquent",
+        "definition": "A delinquent is a person, typically a minor, who commits an act that violates the law or is contrary to the accepted norms of society. The term can also refer to someone who fails to fulfill an obligation, such as paying a debt or attending school.",
+        "example": "The delinquent teenager was caught vandalizing the school property."
+    },
+    {
+        "word": "epithets",
+        "definition": "Epithets are adjectives or phrases that describe or characterize a person, place, or thing, often in a vivid or striking way. They can be complimentary, derogatory, or simply descriptive. For example, \"the cruel dictator\" or \"the wise old owl.\"",
+        "example": "The crowd hurled various epithets at the opposing team's players."
+    },
+    {
+        "word": "inoculate",
+        "definition": "To inoculate means to introduce a vaccine or antigen into a person's body to stimulate the production of antibodies and provide immunity against a specific disease. It can also mean to introduce a microorganism or antigen into a person or organism to induce immunity or infection. Additionally, it can be used metaphorically to mean to make someone resistant or immune to an idea, influence, or emotion.",
+        "example": "Sure, here's a concise example sentence using the word \"inoculate\":\n\n\"The doctor will inoculate the child against measles next week.\""
+    },
+    {
+        "word": "ostentatious",
+        "definition": "Ostentatious: Displaying wealth, knowledge, or abilities in a manner intended to impress others, often in a showy or excessive way.",
+        "example": "Her ostentatious display of wealth, including a diamond-encrusted watch and a luxury sports car, drew disapproving glances from the crowd."
+    },
+    {
+        "word": "tantalizing",
+        "definition": "**Tantalizing**: Something that is tantalizing is highly appealing, exciting, or intriguing, often in a way that makes one eager or impatient to have or experience it. It can also mean something that is just out of reach or difficult to achieve, adding to its allure.",
+        "example": "The aroma of the tantalizing dish made everyone's mouth water."
+    },
+    {
+        "word": "servilely",
+        "definition": "Servilely means in a manner that is excessively submissive, obedient, or fawning, often to gain favor or avoid displeasure.",
+        "example": "The assistant servilely agreed to his boss's unreasonable demands."
+    },
+    {
+        "word": "indolence",
+        "definition": "Indolence is a state of laziness, idleness, or a lack of energy to do work or engage in activity.",
+        "example": "\"His indolence led to a pile of unfinished tasks and a cluttered workspace.\""
+    },
+    {
+        "word": "assiduously",
+        "definition": "\"Assiduously\" is an adverb meaning with great care, perseverance, and diligence. It describes an action done in a very careful, thorough, and persistent manner.",
+        "example": "She assiduously prepared for her exams, ensuring she covered every topic thoroughly."
+    },
+    {
+        "word": "caricature",
+        "definition": "A caricature is a exaggerated or distorted representation of a person, object, or idea, often used for humorous or critical effect.",
+        "example": "The political cartoon was a humorous caricature of the president, exaggerating his features and mannerisms."
+    },
+    {
+        "word": "haranguing",
+        "definition": "Haranguing is the act of delivering a lengthy, aggressive, or critical speech or lecture to someone, often with the intent to persuade, reprimand, or intimidate.",
+        "example": "The manager spent the entire meeting haranguing his team about the missed deadline."
+    },
+    {
+        "word": "interlocutor",
+        "definition": "An interlocutor is a person who takes part in a dialogue or conversation.",
+        "example": "The interlocutor asked a series of probing questions during the interview."
+    },
+    {
+        "word": "agnosticism",
+        "definition": "Agnosticism is the view that the existence of God, of the divine, or the supernatural is unknown or unknowable.",
+        "example": "She embraced agnosticism, believing that the existence of a higher power is unknowable."
+    },
+    {
+        "word": "scorn",
+        "definition": "**Scorn**: To feel or express contempt or derision for someone or something considered unworthy or despicable.",
+        "example": "Despite his achievements, he was met with scorn and derision by his envious peers."
+    },
+    {
+        "word": "scathing",
+        "definition": "Scathing: severely critical or sarcastic in a way that is intended to hurt or insult someone or something.",
+        "example": "Her scathing review of the restaurant's service left no room for improvement."
+    },
+    {
+        "word": "comeuppance",
+        "definition": "**Comeuppance**: Just deserts; punishment or reward that someone deserves, often used to refer to deserved punishment.",
+        "example": "The bully received his comeuppance when he was outsmarted by the very person he had been tormenting."
+    },
+    {
+        "word": "aver",
+        "definition": "\"To aver\" means to state or assert something confidently, often with the implication that it is true or factual. It is typically used in formal or legal contexts.",
+        "example": "I aver that the decision was made in the best interest of the company."
+    },
+    {
+        "word": "parable",
+        "definition": "A parable is a simple story used to illustrate a moral or spiritual lesson, often featuring everyday situations and characters.",
+        "example": "Sure, here's a concise example sentence using the word \"parable\":\n\n\"The teacher used the parable of the sower to illustrate different ways people receive God's word.\""
+    },
+    {
+        "word": "flouted",
+        "definition": "**Flouted**: Openly disregarded or defied (a rule, law, or convention).",
+        "example": "The protesters flouted the new regulations by marching in the restricted area."
+    },
+    {
+        "word": "facetious",
+        "definition": "**Facetious**: Making or characterized by a joke or unsuited to the circumstances.",
+        "example": "Don't be facetious; this is a serious matter."
+    },
+    {
+        "word": "ignominiously",
+        "definition": "**Ignominiously**: In a manner that causes public shame or disgrace; dishonorably.",
+        "example": "The team ignominiously lost the championship after leading for most of the game."
+    },
+    {
+        "word": "adjudicate",
+        "definition": "To adjudicate means to make a formal decision or judgment on a disputed matter.",
+        "example": "The judge will adjudicate the dispute between the two neighbors."
+    },
+    {
+        "word": "superintendence",
+        "definition": "Superintendence is the act of overseeing, directing, or managing the operations, activities, or affairs of something or someone. It involves supervision and control to ensure proper functioning and adherence to rules or standards.",
+        "example": "The museum's curator oversees the superintendence of the entire collection, ensuring each piece is preserved and displayed properly."
+    },
+    {
+        "word": "supine",
+        "definition": "Supine is an adjective that describes a position where one is lying on their back with the face up. It can also refer to a lack of resistance or initiative, often due to laziness or indifference.",
+        "example": "The patient lay supine on the operating table, ready for surgery."
+    },
+    {
+        "word": "slink",
+        "definition": "To move in a smooth, stealthy, or sinuous manner, often with a suggestion of caution or timidity.",
+        "example": "The cat slinked away after knocking over the vase."
+    },
+    {
+        "word": "cravenly",
+        "definition": "Cravenly: In a cowardly or spineless manner, lacking courage or resolution.",
+        "example": "The soldier cravenly abandoned his post when the enemy approached."
+    },
+    {
+        "word": "swell",
+        "definition": "**Swell** (verb): To increase in size, number, or intensity; to rise or bulge outwards.\n\n**Swell** (noun): A long, rolling wave or series of waves; a gradual increase or rise in something.",
+        "example": "The waves were swelling as the storm approached."
+    },
+    {
+        "word": "congregations",
+        "definition": "A group of people assembled for religious worship or instruction.",
+        "example": "Every Sunday, the congregations fill the church to capacity."
+    },
+    {
+        "word": "annulled",
+        "definition": "\"Annulled\" means to be officially declared invalid or void, typically referring to a contract, agreement, or legal decision.",
+        "example": "The court decision was annulled due to a technicality."
+    },
+    {
+        "word": "barmy",
+        "definition": "Barmy: Informal term meaning foolish, crazy, or eccentric.",
+        "example": "Sure, here's a concise example sentence using the word \"barmy\":\n\n\"The old man's barmy ideas often left the neighborhood children bewildered.\""
+    },
+    {
+        "word": "grotesque",
+        "definition": "**Grotesque**: Distorted, bizarre, or unnatural in shape or appearance, often to the point of being repulsive or comical. It can also describe something that is exaggerated or distorted in a way that is shocking or disturbing.",
+        "example": "The abandoned carnival was filled with grotesque, decaying attractions."
+    },
+    {
+        "word": "intercessory",
+        "definition": "Intercessory: Relating to or involving intercession, or the act of intervening on behalf of another, typically in prayer or mediation.",
+        "example": "She offered an intercessory prayer for her friend's recovery."
+    },
+    {
+        "word": "beleaguered",
+        "definition": "\"Beleaguered\" means to be besieged, harassed, or troubled by repeated attacks or problems. It can also describe someone who is persistently troubled or beset by difficulties.",
+        "example": "The beleaguered CEO finally resigned after months of relentless criticism."
+    },
+    {
+        "word": "scrupulously",
+        "definition": "\"Scrupulously\" is an adverb meaning to do something in a very careful, thorough, and precise manner, with great attention to detail and adherence to rules or standards.",
+        "example": "She scrupulously followed the recipe to ensure the cake turned out perfectly."
+    },
+    {
+        "word": "excoriating",
+        "definition": "\"Excoriating\" is an adjective that means severely critical or censuring, often in a biting or harsh manner. It can also refer to the act of removing the skin from an area of the body, but this usage is less common in everyday language.",
+        "example": "The critic delivered an excoriating review of the film, leaving no aspect unscathed."
+    },
+    {
+        "word": "irate",
+        "definition": "**Irate**: Angry, enraged, or highly irritated.",
+        "example": "After finding his car scratched, the irate driver stormed into the parking lot office."
+    },
+    {
+        "word": "fratricidal",
+        "definition": "Fratricidal: Relating to or involving the killing of one's brother or sister, or more broadly, the killing of one's own kind.",
+        "example": "The fratricidal conflict tore the family apart, with siblings turning against each other in a bitter feud."
+    },
+    {
+        "word": "recapitulation",
+        "definition": "Recapitulation is a summary or review of the main points of a discussion, presentation, or text. It is often used to reinforce understanding and ensure clarity.",
+        "example": "In her speech, she provided a recapitulation of the key points discussed during the meeting."
+    },
+    {
+        "word": "perilous",
+        "definition": "Perilous: Full of danger or risk; hazardous.",
+        "example": "The hikers navigated the perilous mountain path with great caution."
+    },
+    {
+        "word": "disingenuous",
+        "definition": "Disingenuous: Not candid or sincere, typically by giving a false appearance of something. It often implies a lack of honesty or straightforwardness, sometimes with the intent to deceive.",
+        "example": "His disingenuous apology did little to mend the fractured relationship."
+    },
+    {
+        "word": "innocuous",
+        "definition": "Innocuous: Harmless, not likely to cause harm or offense.",
+        "example": "The seemingly innocuous comment stirred up a heated debate among the group."
+    },
+    {
+        "word": "petulantly",
+        "definition": "Petulantly is an adverb that describes doing something in a manner that shows sudden, impatient irritation or annoyance, often over minor things. It is the adverbial form of the adjective \"petulant.\"",
+        "example": "She crossed her arms and stormed off, petulantly refusing to engage in the conversation any further."
+    },
+    {
+        "word": "baroque",
+        "definition": "Baroque refers to a style of European art, music, and architecture from the late 16th to early 18th centuries, characterized by ornate detail, grandeur, and a sense of movement and drama. It can also describe something overly intricate or elaborate.",
+        "example": "The museum's latest exhibition showcases the intricate details of baroque architecture."
+    },
+    {
+        "word": "profligate",
+        "definition": "**Profligate**: Recklessly extravagant or wasteful in the use of resources.",
+        "example": "The profligate prince squandered the kingdom's wealth on lavish parties and unnecessary luxuries."
+    },
+    {
+        "word": "frivolous",
+        "definition": "Frivolous: Not having any serious purpose or value; trivial or superficial.",
+        "example": "The court dismissed the case as frivolous, lacking any substantial evidence or merit."
+    },
+    {
+        "word": "incessant",
+        "definition": "\"Incessant\" means continuing without pause or interruption; unceasing.",
+        "example": "The incessant rain throughout the night caused the river to overflow."
+    },
+    {
+        "word": "ingratiate",
+        "definition": "To **ingratiate** is to bring oneself into favor with someone, often through flattery or obsequious behavior.",
+        "example": "Sure, here's a concise example sentence using the word \"ingratiate\":\n\n\"The sycophant tried to ingratiate himself with the new boss by offering to take on extra tasks.\""
+    },
+    {
+        "word": "tempestuous",
+        "definition": "Tempestuous: characterized by strong and turbulent or conflicting emotions; stormy or tumultuous.",
+        "example": "The tempestuous storm caused widespread damage along the coast."
+    },
+    {
+        "word": "caricatures",
+        "definition": "Caricatures are exaggerated or distorted representations of people, often highlighting their most prominent features for humorous or critical effect.",
+        "example": "The political cartoonist's caricatures exaggerated the politicians' features for comedic effect."
+    },
+    {
+        "word": "clandestine",
+        "definition": "**Clandestine**: Secretive, done in a way that is meant to not be known by others.",
+        "example": "The couple had a clandestine meeting at the old café."
+    },
+    {
+        "word": "querulous",
+        "definition": "Querulous: Complaining in a petulant or whining manner.",
+        "example": "The querulous customer complained about every minor detail of the service."
+    },
+    {
+        "word": "predilection",
+        "definition": "A predilection is a preference or special liking for something; a tendency to think favorably of a particular thing, person, or idea.",
+        "example": "She has a predilection for vintage clothing, often visiting thrift stores on weekends."
+    }
+]
