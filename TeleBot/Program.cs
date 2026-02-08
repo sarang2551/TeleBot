@@ -25,6 +25,7 @@ var me = await bot.GetMe();
 
 var producerService = new ProducerService(config);
 var consumerService = new ConsumerService(config,bot);
+var firebaseService = new FirebaseService(config,producerService);
 var activeWordGames = new ConcurrentDictionary<long, byte>();
 
 var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringComparer.OrdinalIgnoreCase)

@@ -9,6 +9,7 @@ public class EnvSettings
     {
         public required string MISTRAL_API_KEY { get; set; }
         public required KafkaSettings Kafka { get; set; }
+        public required Wordgame Wordgame { get; set; }
     }
     public class LoggingSettings
     {
@@ -26,5 +27,10 @@ public class EnvSettings
         public required string BootstrapServers { get; set; }
         public required string ConsumerTopic { get; set; }
         public required string ProducerTopic { get; set; }
+    }
+    public class Wordgame
+    {
+        public required string ProducerTopic { get; set; }
+        public required string ConsumerTopic { get; set; }
     }
 }
