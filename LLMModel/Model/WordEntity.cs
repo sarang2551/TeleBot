@@ -1,11 +1,17 @@
-﻿namespace LLMModel.Model;
+﻿using System.Text.Json.Serialization;
+
+namespace LLMModel.Model;
 
 public class WordEntity : BaseKafkaEntity<WordEntity>
 {
     private int _id;
+    [JsonInclude]
     public string definition = string.Empty;
+    [JsonInclude]
     public string example = string.Empty;
+    [JsonInclude]
     public string word = string.Empty;
+    [JsonInclude]
     public int difficulty;
 
     public bool IsValid =>
