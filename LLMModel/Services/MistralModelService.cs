@@ -27,7 +27,12 @@ public class MistralModelService
         }
     }
 
-    public async Task<string> GetResponse(string input)
+    public Task<string> GetResponse(string input)
+    {
+        return GetResponse(input, null);
+    }
+
+    public async Task<string> GetResponse(string input, string? useCaseName)
     {
         try
         {
@@ -37,7 +42,7 @@ public class MistralModelService
                 throw new SystemException("Failed to create Mistral client");
             }
 
-            var useCase = _useCases.FirstOrDefault(candidate => candidate.CanHandle(input)) ?? _useCases.First();
+            var useCase = ResolveUseCase(input, useCaseName);
             var chatHistory = _chatHistories[useCase.Name];
             chatHistory.Add(new ChatMessage(ChatMessage.RoleEnum.User, input));
             var request = new ChatCompletionRequest(ModelDefinitions.MistralSmall, chatHistory,
@@ -71,5 +76,22 @@ public class MistralModelService
             Console.WriteLine(e.StackTrace);
             return null;
         }
+    }
+
+    private IMistralUseCase ResolveUseCase(string input, string? useCaseName)
+    {
+        if (!string.IsNullOrWhiteSpace(useCaseName))
+        {
+            var match = _useCases.FirstOrDefault(candidate =>
+                string.Equals(candidate.Name, useCaseName, StringComparison.OrdinalIgnoreCase));
+            if (match != null)
+            {
+                return match;
+            }
+
+            throw new SystemException("Unknown use case: " + useCaseName);
+        }
+
+        return _useCases.FirstOrDefault(candidate => candidate.CanHandle(input)) ?? _useCases.First();
     }
 }
