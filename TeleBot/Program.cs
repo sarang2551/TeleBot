@@ -61,7 +61,7 @@ var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringCo
         };
         await producerService.ProduceAsync(request);
     },
-    ["/word"] = async (msg, _) =>
+    ["/word"] = async (msg, args) =>
     {
         if (activeWordGames.TryRemove(msg.Chat.Id, out _))
         {
