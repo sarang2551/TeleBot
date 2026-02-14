@@ -22,6 +22,8 @@ public class WordDefinitionUseCase : IMistralUseCase
 
         Given a natural language request, extract the following information:
         - word: The word being defined (required)
+
+        And populate the following information:
         - definition: A clear, concise definition (required)
         - example: A natural example sentence using the word (required)
         - error: An explanation if the request is missing the target word (optional)
