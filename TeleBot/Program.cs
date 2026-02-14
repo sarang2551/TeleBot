@@ -83,12 +83,13 @@ var wordGameHandlers = new Dictionary<string, Func<Message, string?, Task>>(Stri
         var requestedWord = args ?? string.Empty;
         if (string.IsNullOrWhiteSpace(requestedWord))
         {
-            await bot.SendMessage(msg.Chat, "Please provide a word after /addWord.");
+            await bot.SendMessage(msg.Chat, "Please provide a word after /addWord."); 
             return;
         }
 
+        await firebaseService.AddWord(requestedWord);
         // add a word using an API to get the definition and example use
-        await bot.SendMessage(msg.Chat, $"Added '{requestedWord}' to the word game queue.");
+        await bot.SendMessage(msg.Chat, $"Added '{requestedWord}' to the library.");
     }
 };
 // Fire and forget this task in the background thread

@@ -21,7 +21,7 @@ public class CalendarConsumerService : ConsumerService<MessageRequest>
     {
         Console.WriteLine($"[CalendarConsumer] Processing calendar message with content: {message.content}");
 
-        string modelResponse = await _mistralModelService.GetResponse(message.content);
+        string modelResponse = await _mistralModelService.GetResponse(message.content,UseCases.UseCases.CALENDAR_EVENT);
         Console.WriteLine($"[CalendarConsumer] Response from LLM: {modelResponse}");
 
         var response = new MessageRequest

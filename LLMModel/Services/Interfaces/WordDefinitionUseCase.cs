@@ -11,7 +11,7 @@ public class WordDefinitionUseCase : IMistralUseCase
     private static readonly Regex TriggerRegex = new(@"\b(define|definition|meaning of|what does|what's the meaning)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public string Name => "word-definition";
+    public UseCases Name => UseCases.WORD_DEFINITION;
 
     public bool CanHandle(string input)
     {
@@ -82,7 +82,7 @@ public class WordDefinitionUseCase : IMistralUseCase
             throw new SystemException("Invalid definition data: missing required fields.");
         }
 
-        Console.WriteLine("WordDefinitionUseCase: Created definition for word: " + wordEntity.word);
+        Console.WriteLine("[WordDefinitionUseCase]: Created definition for word: " + wordEntity.word);
         return FormatDefinition(wordEntity);
     }
 

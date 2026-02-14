@@ -6,7 +6,7 @@ namespace LLMModel.Services.UseCases;
 
 public class CalendarEventUseCase : IMistralUseCase
 {
-    public string Name => "calendar-event";
+    public UseCases Name => UseCases.CALENDAR_EVENT;
 
     public bool CanHandle(string input)
     {

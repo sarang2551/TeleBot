@@ -4,8 +4,7 @@ namespace LLMModel.Services.UseCases;
 
 public interface IMistralUseCase
 {
-    string Name { get; }
-    bool CanHandle(string input);
+    UseCases Name { get; }
     ChatMessage SystemMessage { get; }
     ResponseFormat ResponseFormat { get; }
     string ProcessOutput(string output);

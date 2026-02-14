@@ -1,4 +1,6 @@
 ﻿using LLMModel.Model;
+using LLMModel.Services.UseCases;
+using Newtonsoft.Json;
 
 namespace LLMModel.Services;
 
@@ -16,20 +18,19 @@ public class WordGameConsumerService : ConsumerService<WordEntity>
 
     protected override async Task ProcessMessage(WordEntity wordEntity)
     {
-        Console.WriteLine($"[WordGameConsumer] Processing word: {wordEntity.word}");
+        try
+        {
+            Console.WriteLine($"[WordGameConsumer] Processing word: {wordEntity.word}");
 
-        var response = await _mistralModelService.GetResponse(wordEntity.word);
+            var response = await _mistralModelService.GetResponse("Define: " + wordEntity.word, UseCases.UseCases.WORD_DEFINITION);
         
-        // Process the word entity
-        var processedEntity = ProcessWordGameLogic(wordEntity);
-
-        // Send response back
-        await _producer.ProduceAsync(processedEntity,_configuration.Env.Wordgame.ProducerTopic);
+            // Process the word entity
+            WordEntity entity = DeserializeMessage(response);
+            // Send response back
+            await _producer.ProduceAsync(entity,_configuration.Env.Wordgame.ProducerTopic);
+        }catch(Exception ex)
+        {
+            Console.WriteLine("[WordGameConsumer] Error processing message from consumer: " + ex.Message);
+        }
     }
-
-    private WordEntity ProcessWordGameLogic(WordEntity wordEntity)
-    {
-        
-        return wordEntity;
-    } 
 }

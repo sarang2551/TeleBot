@@ -1,6 +1,5 @@
 ﻿using Firebase.Database;
 using FirebaseAdmin;
-using FirebaseAdmin.Auth;
 using Google.Apis.Auth.OAuth2;
 using Mistral.SDK;
 using TeleBot.Model;
@@ -11,12 +10,12 @@ public class FirebaseService
 {
 
     private readonly FirebaseClient _firebaseClient;
-    private ProducerService _producerService;
+    private readonly ProducerService _producerService;
 
     public FirebaseService(EnvSettings config, ProducerService producerService)
     {
         String databaseUrl = config.Env.Firebase.DatabaseAddress;
-        String credentialsPath = config.Env.Firebase.CredentialsPath;
+        String credentialsPath = Path.Combine(AppContext.BaseDirectory, config.Env.Firebase.CredentialsPath);
         if (FirebaseApp.DefaultInstance == null)
         {
             FirebaseApp.Create(new AppOptions()

@@ -9,7 +9,7 @@ using ChatMessage = Mistral.SDK.DTOs.ChatMessage;
 
 public class MistralModelService
 {
-    private readonly Dictionary<string, List<ChatMessage>> _chatHistories = new();
+    private readonly Dictionary<UseCases, List<ChatMessage>> _chatHistories = new();
     private readonly IReadOnlyList<IMistralUseCase> _useCases;
     private readonly string _apiKey;
 
@@ -27,22 +27,21 @@ public class MistralModelService
         }
     }
 
-    public Task<string> GetResponse(string input)
-    {
-        return GetResponse(input, null);
-    }
-
-    public async Task<string> GetResponse(string input, string? useCaseName)
+    public async Task<string> GetResponse(string input, UseCases useCaseName)
     {
         try
         {
             var client = GetLlM();
             if (client == null)
             {
-                throw new SystemException("Failed to create Mistral client");
+                throw new SystemException("[MistralModelService] Failed to create Mistral client");
             }
 
-            var useCase = ResolveUseCase(input, useCaseName);
+            var useCase = _useCases.FirstOrDefault(c => c.Name == useCaseName);
+            if (useCase == null)
+            {
+                throw new SystemException("[MistralModelService] Failed to find use case for " + useCaseName);
+            }
             var chatHistory = _chatHistories[useCase.Name];
             chatHistory.Add(new ChatMessage(ChatMessage.RoleEnum.User, input));
             var request = new ChatCompletionRequest(ModelDefinitions.MistralSmall, chatHistory,
@@ -51,17 +50,16 @@ public class MistralModelService
             var output = response.Choices.First().Message.Content;
             if (string.IsNullOrEmpty(output))
             {
-                throw new SystemException("Model output is null/empty for input: " + input);
+                throw new SystemException("[MistralModelService] Model output is null/empty for input: " + input);
             }
             var formattedResponse = useCase.ProcessOutput(output);
-            Console.WriteLine("MistralModelService: Processed use case " + useCase.Name);
+            Console.WriteLine("[MistralModelService]: Processed use case " + useCase.Name + " with output : " + formattedResponse);
             chatHistory.Add(new ChatMessage(ChatMessage.RoleEnum.Assistant, output));
             return formattedResponse;
         }
         catch (Exception e)
         {
-            Console.WriteLine("MistralModelService: " + e.Message);
-            return null;
+            throw new SystemException("[MistralModelService] Error getting response " + e.Message);
         }
     }
 
@@ -78,20 +76,4 @@ public class MistralModelService
         }
     }
 
-    private IMistralUseCase ResolveUseCase(string input, string? useCaseName)
-    {
-        if (!string.IsNullOrWhiteSpace(useCaseName))
-        {
-            var match = _useCases.FirstOrDefault(candidate =>
-                string.Equals(candidate.Name, useCaseName, StringComparison.OrdinalIgnoreCase));
-            if (match != null)
-            {
-                return match;
-            }
-
-            throw new SystemException("Unknown use case: " + useCaseName);
-        }
-
-        return _useCases.FirstOrDefault(candidate => candidate.CanHandle(input)) ?? _useCases.First();
-    }
 }
