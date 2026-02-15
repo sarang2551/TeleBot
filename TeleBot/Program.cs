@@ -24,7 +24,8 @@ var bot = new TelegramBotClient(config.Env.BOT_TOKEN,cancellationToken:cts.Token
 var me = await bot.GetMe();
 
 var producerService = new ProducerService(config);
-var consumerService = new ConsumerService(config,bot);
+var calendarConsumerService = new CalendarConsumerService(config, bot);
+var gameConsumerService = new GameConsumerService(config, bot);
 var firebaseService = new FirebaseService(config,producerService);
 var activeWordGames = new ConcurrentDictionary<long, byte>();
 
@@ -93,7 +94,8 @@ var wordGameHandlers = new Dictionary<string, Func<Message, string?, Task>>(Stri
     }
 };
 // Fire and forget this task in the background thread
-_ = Task.Run(async () => await consumerService.StartAsync(CancellationToken.None));
+_ = Task.Run(async () => await calendarConsumerService.StartAsync(CancellationToken.None));
+_ = Task.Run(async () => await gameConsumerService.StartAsync(CancellationToken.None));
 // Blocking task requires cancellation token to exit main thread
 bot.OnMessage += CustomOnMessageHandler;
 Console.WriteLine($"[TeleBot Service] Started bot {me.Username} at {DateTime.Now}");
