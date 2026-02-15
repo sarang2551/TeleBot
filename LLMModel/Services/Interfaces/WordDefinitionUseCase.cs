@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using LLMModel.Model;
 using Mistral.SDK.DTOs;
@@ -83,15 +82,6 @@ public class WordDefinitionUseCase : IMistralUseCase
         }
 
         Console.WriteLine("[WordDefinitionUseCase]: Created definition for word: " + wordEntity.word);
-        return FormatDefinition(wordEntity);
-    }
-
-    private static string FormatDefinition(WordEntity wordEntity)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine($"Word: {wordEntity.word}");
-        sb.AppendLine($"Definition: {wordEntity.definition}");
-        sb.AppendLine($"Example: {wordEntity.example}");
-        return sb.ToString().Trim();
+        return JsonSerializer.Serialize(wordEntity);
     }
 }
