@@ -8,11 +8,6 @@ public class CalendarEventUseCase : IMistralUseCase
 {
     public UseCases Name => UseCases.CALENDAR_EVENT;
 
-    public bool CanHandle(string input)
-    {
-        return true;
-    }
-
     public ChatMessage SystemMessage { get; } = new(ChatMessage.RoleEnum.System, $@"You are a calendar event assistant. Your task is to extract event information from natural language text and convert it to a structured JSON format for creating Google Calendar events.
 
         Given a natural language request, extract the following information:

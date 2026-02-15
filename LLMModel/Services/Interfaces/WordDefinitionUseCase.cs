@@ -12,11 +12,6 @@ public class WordDefinitionUseCase : IMistralUseCase
 
     public UseCases Name => UseCases.WORD_DEFINITION;
 
-    public bool CanHandle(string input)
-    {
-        return TriggerRegex.IsMatch(input);
-    }
-
     public ChatMessage SystemMessage { get; } = new(ChatMessage.RoleEnum.System, $@"You are a dictionary assistant. Your task is to extract the target word from the user's request and return a concise definition and an example sentence in JSON format.
 
         Given a natural language request, extract the following information:
