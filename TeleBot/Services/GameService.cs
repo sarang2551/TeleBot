@@ -7,6 +7,7 @@ public class GameService
     private int Score { get; set; }
     /** Stores the entities relevant to the game session. Adding words to the database will not update the current game session entities. */
     private readonly List<WordEntity> currentEntities;
+    private readonly List<WordEntity> allEntities;
     private readonly FirebaseService _firebaseService;
 
     public GameService(FirebaseService firebaseService)
@@ -14,6 +15,7 @@ public class GameService
         _firebaseService = firebaseService ?? throw new ArgumentNullException(nameof(firebaseService));
         var entities = _firebaseService.GetWordsAsync().GetAwaiter().GetResult();
         currentEntities = entities.OrderByDescending(entity => entity.difficulty).ToList();
+        allEntities = currentEntities.ToList();
     }
 
     public WordEntity GetNextWord()
@@ -32,7 +34,6 @@ public class GameService
     {
         Score = Math.Max(Score - 1, 0);
         wordEntity.difficulty++;
-        _firebaseService.IncrementWordDifficulty(wordEntity.word);
         RequeueWord(wordEntity);
     }
 
@@ -40,7 +41,6 @@ public class GameService
     {
         Score++;
         wordEntity.difficulty = 0;
-        _firebaseService.ResetWordDifficulty(wordEntity.word);
         RequeueWord(wordEntity);
     }
 
@@ -54,6 +54,11 @@ public class GameService
         }
 
         HandleIncorrectAnswer(wordEntity);
+    }
+
+    public Task PersistWordDifficultiesAsync()
+    {
+        return _firebaseService.UpdateWordDifficultiesAsync(allEntities);
     }
 
     /** Algorithm to prioritize the next word that should be displayed based on the word difficulty. TODO: Give a better function name */
@@ -70,5 +75,4 @@ public class GameService
 
         currentEntities.Insert(index, wordEntity);
     }
-
 }

@@ -27,7 +27,7 @@ var producerService = new ProducerService(config);
 var calendarConsumerService = new CalendarConsumerService(config, bot);
 var firebaseService = new FirebaseService(config,producerService);
 var gameConsumerService = new GameConsumerService(config, bot, firebaseService);
-var activeWordGames = new ConcurrentDictionary<long, byte>();
+var activeWordGames = new ConcurrentDictionary<long, GameService>();
 
 var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringComparer.OrdinalIgnoreCase)
 {
@@ -65,13 +65,14 @@ var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringCo
     },
     ["/word"] = async (msg, args) =>
     {
-        if (activeWordGames.TryRemove(msg.Chat.Id, out _))
+        if (activeWordGames.TryRemove(msg.Chat.Id, out var gameService))
         {
-            await bot.SendMessage(msg.Chat, "Word game ended. Use /word to start again.");
+            await gameService.PersistWordDifficultiesAsync();
+            await bot.SendMessage(msg.Chat, "Word game ended and difficulties were saved. Use /word to start again.");
             return;
         }
 
-        activeWordGames[msg.Chat.Id] = 1;
+        activeWordGames[msg.Chat.Id] = new GameService(firebaseService);
         await bot.SendMessage(msg.Chat,
             "Word game started. Use /addWord while the game is active. Send /word again to stop.");
     }
