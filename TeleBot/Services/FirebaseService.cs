@@ -9,9 +9,8 @@ public class FirebaseService
 {
 
     private readonly FirebaseClient _firebaseClient;
-    private readonly ProducerService _producerService;
 
-    public FirebaseService(EnvSettings config, ProducerService producerService)
+    public FirebaseService(EnvSettings config)
     {
         String databaseUrl = config.Env.Firebase.DatabaseAddress;
         String credentialsPath = Path.Combine(AppContext.BaseDirectory, config.Env.Firebase.CredentialsPath);
@@ -23,7 +22,6 @@ public class FirebaseService
             });
         }
 
-        _producerService = producerService;
         _firebaseClient = new FirebaseClient(databaseUrl);
     }
 
@@ -40,7 +38,10 @@ public class FirebaseService
 
             foreach (var entity in entities)
             {
-                result.Add(entity.Object);
+                if (entity.Object != null)
+                {
+                    result.Add(entity.Object);
+                }
             }
 
             return result;
@@ -51,6 +52,12 @@ public class FirebaseService
             return new List<WordEntity>();
         }
 
+    }
+
+    public void IncrementWordDifficulty(string word)
+    {
+        // finds the word in the database & increases its difficulty by one
+        UpdateWordDifficulty(word, currentDifficulty => currentDifficulty + 1);
     }
 
     public async Task UpdateWordDifficultiesAsync(IEnumerable<WordEntity> wordEntities)
@@ -96,8 +103,18 @@ public class FirebaseService
      */
     public async Task AddWord(WordEntity word)
     {
-        // using kafka for a separate event trigger in the LLMModel. Fire and forget, the consumer service will handle updating the database
-        return;
+        // Save completed word entity into Firebase using the word itself as a unique key.
+        // Words without generated definition/example should not be persisted yet.
+        if (string.IsNullOrWhiteSpace(word.definition) || string.IsNullOrWhiteSpace(word.example))
+        {
+            Console.WriteLine($"Skipping save for '{word.word}' because definition/example is missing.");
+            return;
+        }
+
+        await _firebaseClient
+            .Child("/")
+            .Child(word.word)
+            .PutAsync(word);
     }
 
 }

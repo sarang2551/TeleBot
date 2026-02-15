@@ -25,7 +25,7 @@ var me = await bot.GetMe();
 
 var producerService = new ProducerService(config);
 var calendarConsumerService = new CalendarConsumerService(config, bot);
-var firebaseService = new FirebaseService(config,producerService);
+var firebaseService = new FirebaseService(config);
 var gameConsumerService = new GameConsumerService(config, bot, firebaseService);
 var activeWordGames = new ConcurrentDictionary<long, GameService>();
 
