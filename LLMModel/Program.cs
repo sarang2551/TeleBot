@@ -17,17 +17,29 @@ config.Env.Kafka.BootstrapServers =
 
 using var cts = new CancellationTokenSource();
 
+Console.CancelKeyPress += (_, eventArgs) =>
+{
+    eventArgs.Cancel = true;
+    Console.WriteLine("[LLM Model Service] Ctrl+C received, shutting down...");
+    cts.Cancel();
+};
+
 var kafkaInitializerService = new KafkaInitializerService(config);
 await kafkaInitializerService.init();
 
 var calendarProducer = new ProducerService<MessageRequest>(config);
 var wordGameProducer = new ProducerService<WordEntity>(config);
-var consumerCancellationToken = CancellationToken.None;
-var calendarTask = Task.Run(() => new CalendarConsumerService(config, calendarProducer).StartAsync(consumerCancellationToken));
-var wordGameTask = Task.Run(() => new WordGameConsumerService(config, wordGameProducer).StartAsync(consumerCancellationToken));
+var calendarConsumer = new CalendarConsumerService(config, calendarProducer);
+var wordGameConsumer = new WordGameConsumerService(config, wordGameProducer);
 
-// background thread tasks
-var consumerTasks = Task.WhenAll(calendarTask, wordGameTask);
+await calendarConsumer.StartAsync(cts.Token);
+await wordGameConsumer.StartAsync(cts.Token);
+
+// Track background consumer execution tasks.
+var consumerTasks = Task.WhenAll(
+    calendarConsumer.ExecuteTask ?? Task.CompletedTask,
+    wordGameConsumer.ExecuteTask ?? Task.CompletedTask
+);
 
 Console.WriteLine($"[LLM Model Service] Started at {DateTime.Now} \n");
 try
@@ -42,6 +54,10 @@ catch (OperationCanceledException)
 // Wait for consumer to finish gracefully
 try
 {
+    await Task.WhenAll(
+        calendarConsumer.StopAsync(CancellationToken.None),
+        wordGameConsumer.StopAsync(CancellationToken.None)
+    );
     await consumerTasks;
 }
 catch (OperationCanceledException)
