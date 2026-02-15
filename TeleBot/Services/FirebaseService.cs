@@ -60,10 +60,42 @@ public class FirebaseService
         UpdateWordDifficulty(word, currentDifficulty => currentDifficulty + 1);
     }
 
-    public void ResetWordDifficulty(string word)
+    public async Task UpdateWordDifficultiesAsync(IEnumerable<WordEntity> wordEntities)
     {
-        // finds the word in the database & sets its difficulty to 0
-        UpdateWordDifficulty(word, _ => 0);
+        try
+        {
+            var allDbWords = await _firebaseClient
+                .Child("/")
+                .OnceAsync<WordEntity>();
+
+            var keyByWord = allDbWords
+                .Where(entry => !string.IsNullOrWhiteSpace(entry.Object.word))
+                .GroupBy(entry => entry.Object.word, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(group => group.Key, group => group.First().Key, StringComparer.OrdinalIgnoreCase);
+
+            foreach (var wordEntity in wordEntities)
+            {
+                if (string.IsNullOrWhiteSpace(wordEntity.word))
+                {
+                    continue;
+                }
+
+                if (!keyByWord.TryGetValue(wordEntity.word, out var key))
+                {
+                    continue;
+                }
+
+                await _firebaseClient
+                    .Child("/")
+                    .Child(key)
+                    .Child(nameof(WordEntity.difficulty))
+                    .PutAsync(wordEntity.difficulty);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating word difficulties : {ex.Message}");
+        }
     }
 
     /**
@@ -83,43 +115,6 @@ public class FirebaseService
             .Child("/")
             .Child(word.word)
             .PutAsync(word);
-    }
-
-    private void UpdateWordDifficulty(string word, Func<int, int> updateOperation)
-    {
-        try
-        {
-            UpdateWordDifficultyAsync(word, updateOperation).GetAwaiter().GetResult();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating difficulty for '{word}': {ex.Message}");
-        }
-    }
-
-    private async Task UpdateWordDifficultyAsync(string word, Func<int, int> updateOperation)
-    {
-        var entities = await _firebaseClient
-            .Child("/")
-            .OnceAsync<WordEntity>();
-
-        var entityMatch = entities.FirstOrDefault(entity =>
-            entity.Object != null &&
-            (string.Equals(entity.Object.word, word, StringComparison.OrdinalIgnoreCase) ||
-             string.Equals(entity.Key, word, StringComparison.OrdinalIgnoreCase)));
-
-        if (entityMatch?.Object == null)
-        {
-            Console.WriteLine($"Word '{word}' not found in Firebase.");
-            return;
-        }
-
-        entityMatch.Object.difficulty = updateOperation(entityMatch.Object.difficulty);
-
-        await _firebaseClient
-            .Child("/")
-            .Child(entityMatch.Key)
-            .PutAsync(entityMatch.Object);
     }
 
 }
