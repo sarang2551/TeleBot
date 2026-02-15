@@ -13,6 +13,7 @@ services:
         condition: service_healthy
     environment:
       - KAFKA_BOOTSTRAP_SERVER=kafka:9092
+      - ASPNETCORE_ENVIRONMENT=Development
 
   telebot:
     build:
