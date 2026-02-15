@@ -1,11 +1,16 @@
 ﻿using Mistral.SDK.DTOs;
 
-namespace LLMModel.Services.UseCases;
+namespace LLMModel.Services.Interfaces;
 
 public interface IMistralUseCase
 {
-    UseCases Name { get; }
+    UseCases.UseCases Name { get; }
     ChatMessage SystemMessage { get; }
     ResponseFormat ResponseFormat { get; }
-    string ProcessOutput(string output);
+    object ProcessOutput(string output);
+}
+
+public interface IMistralUseCase<T> : IMistralUseCase
+{
+    new T ProcessOutput(string output);
 }

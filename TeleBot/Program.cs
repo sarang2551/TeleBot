@@ -24,8 +24,9 @@ var bot = new TelegramBotClient(config.Env.BOT_TOKEN,cancellationToken:cts.Token
 var me = await bot.GetMe();
 
 var producerService = new ProducerService(config);
-var consumerService = new ConsumerService(config,bot);
+var calendarConsumerService = new CalendarConsumerService(config, bot);
 var firebaseService = new FirebaseService(config,producerService);
+var gameConsumerService = new GameConsumerService(config, bot, firebaseService);
 var activeWordGames = new ConcurrentDictionary<long, byte>();
 
 var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringComparer.OrdinalIgnoreCase)
@@ -57,7 +58,7 @@ var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringCo
         MessageRequest request = new MessageRequest
         {
             content = naturalLanguageMessage,
-            message_id = msg.MessageId.ToString(),
+            message_id = msg.MessageId,
             chat_id = msg.Chat.Id
         };
         await producerService.ProduceAsync(request);
@@ -86,14 +87,13 @@ var wordGameHandlers = new Dictionary<string, Func<Message, string?, Task>>(Stri
             await bot.SendMessage(msg.Chat, "Please provide a word after /addWord."); 
             return;
         }
-
-        await firebaseService.AddWord(requestedWord);
-        // add a word using an API to get the definition and example use
-        await bot.SendMessage(msg.Chat, $"Added '{requestedWord}' to the library.");
+        // the addition of the word and the reply is handled by the consumer service
+        await producerService.ProduceAsync(new WordEntity{word = requestedWord,  chat_id = msg.Chat.Id, message_id = msg.MessageId, difficulty = 0, example = string.Empty});
     }
 };
 // Fire and forget this task in the background thread
-_ = Task.Run(async () => await consumerService.StartAsync(CancellationToken.None));
+_ = Task.Run(async () => await calendarConsumerService.StartAsync(CancellationToken.None));
+_ = Task.Run(async () => await gameConsumerService.StartAsync(CancellationToken.None));
 // Blocking task requires cancellation token to exit main thread
 bot.OnMessage += CustomOnMessageHandler;
 Console.WriteLine($"[TeleBot Service] Started bot {me.Username} at {DateTime.Now}");

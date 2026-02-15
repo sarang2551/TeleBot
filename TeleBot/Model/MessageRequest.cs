@@ -1,12 +1,13 @@
 ﻿using Confluent.Kafka;
 using System.Text.Json;
+using TeleBot.Model.Interfaces;
 
 namespace TeleBot.Model;
 
-public record MessageRequest
+public class MessageRequest : ITeleMessage
 {
     public required string content { get; set; }
-    public required string message_id { get; set; }
+    public required int message_id { get; set; }
     public required long chat_id { get; set; }
     
 }

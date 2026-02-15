@@ -21,11 +21,12 @@ public class WordGameConsumerService : ConsumerService<WordEntity>
         try
         {
             Console.WriteLine($"[WordGameConsumer] Processing word: {wordEntity.word}");
-
+            var chatId = wordEntity.chat_id;
+            var messageId = wordEntity.message_id;
             var response = await _mistralModelService.GetResponse("Define: " + wordEntity.word, UseCases.UseCases.WORD_DEFINITION);
-        
-            // Process the word entity
-            WordEntity entity = DeserializeMessage(response);
+            var entity = (WordEntity)response;
+            entity.chat_id = chatId;
+            entity.message_id = messageId;
             // Send response back
             await _producer.ProduceAsync(entity,_configuration.Env.Wordgame.ProducerTopic);
         }catch(Exception ex)
