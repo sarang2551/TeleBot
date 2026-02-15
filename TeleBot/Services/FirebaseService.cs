@@ -54,15 +54,15 @@ public class FirebaseService
         }
     
     }
-
-    public WordEntity GetWordById(string word)
-    {
-        return null;
-    }
     
-    public void UpdateWordDifficulty(string word)
+    public void IncrementWordDifficulty(string word)
     {
-        
+        // finds the word in the database & increases its difficulty by one
+    }
+
+    public void ResetWordDifficulty(string word)
+    {
+        // finds the word in the database & sets its difficulty to 0
     }
 
     /**
