@@ -1,4 +1,5 @@
 ﻿using Firebase.Database;
+using Firebase.Database.Query;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using TeleBot.Model;
@@ -54,10 +55,37 @@ public class FirebaseService
 
     }
 
-    public void IncrementWordDifficulty(string word)
+    /**
+     * <summary> Function that contacts the LLMModel to generate word sentence examples and definition </summary>
+     */
+    public async Task AddWord(WordEntity word)
     {
-        // finds the word in the database & increases its difficulty by one
-        UpdateWordDifficulty(word, currentDifficulty => currentDifficulty + 1);
+        if (string.IsNullOrWhiteSpace(word.word))
+        {
+            throw new ArgumentException("[FirebaseService] Word is null or empty and therefore cannot be saved!");
+        }
+
+        try
+        {
+            var normalizedWord = word.word.Trim();
+            var firebaseKey = normalizedWord.ToLowerInvariant();
+
+            // Database schema intentionally excludes transport metadata (chat_id, message_id).
+            await _firebaseClient
+                .Child("/")
+                .Child(firebaseKey)
+                .PutAsync(new
+                {
+                    word = normalizedWord,
+                    definition = word.definition,
+                    example = word.example,
+                    difficulty = word.difficulty
+                });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding word : {ex.Message}");
+        }
     }
 
     public async Task UpdateWordDifficultiesAsync(IEnumerable<WordEntity> wordEntities)
@@ -96,25 +124,6 @@ public class FirebaseService
         {
             Console.WriteLine($"Error updating word difficulties : {ex.Message}");
         }
-    }
-
-    /**
-     * <summary> Function that contacts the LLMModel to generate word sentence examples and definition </summary>
-     */
-    public async Task AddWord(WordEntity word)
-    {
-        // Save completed word entity into Firebase using the word itself as a unique key.
-        // Words without generated definition/example should not be persisted yet.
-        if (string.IsNullOrWhiteSpace(word.definition) || string.IsNullOrWhiteSpace(word.example))
-        {
-            Console.WriteLine($"Skipping save for '{word.word}' because definition/example is missing.");
-            return;
-        }
-
-        await _firebaseClient
-            .Child("/")
-            .Child(word.word)
-            .PutAsync(word);
     }
 
 }

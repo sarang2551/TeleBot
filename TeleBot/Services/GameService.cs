@@ -7,17 +7,16 @@ public class GameService
     private int Score { get; set; }
     /** Stores the entities relevant to the game session. Adding words to the database will not update the current game session entities. */
     private readonly List<WordEntity> currentEntities;
-    private readonly List<WordEntity> allEntities;
     private readonly FirebaseService _firebaseService;
+    private WordEntity? activeWordEntity;
 
     public GameService(FirebaseService firebaseService)
     {
         _firebaseService = firebaseService ?? throw new ArgumentNullException(nameof(firebaseService));
         var entities = _firebaseService.GetWordsAsync().GetAwaiter().GetResult();
         currentEntities = entities.OrderByDescending(entity => entity.difficulty).ToList();
-        allEntities = currentEntities.ToList();
     }
-
+    
     public WordEntity GetNextWord()
     {
         if (currentEntities.Count == 0)
@@ -27,6 +26,7 @@ public class GameService
 
         var nextWord = currentEntities[0];
         currentEntities.RemoveAt(0);
+        activeWordEntity = nextWord;
         return nextWord;
     }
 
@@ -35,6 +35,7 @@ public class GameService
         Score = Math.Max(Score - 1, 0);
         wordEntity.difficulty++;
         RequeueWord(wordEntity);
+        ClearActiveWord(wordEntity);
     }
 
     public void HandleCorrectAnswer(WordEntity wordEntity)
@@ -42,12 +43,12 @@ public class GameService
         Score++;
         wordEntity.difficulty = 0;
         RequeueWord(wordEntity);
+        ClearActiveWord(wordEntity);
     }
 
     public void Evaluate(string answer, WordEntity wordEntity)
     {
-        // if MCQ then an equality check will do
-        if (string.Equals(answer.Trim(), wordEntity.word, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(answer.Trim(), wordEntity.word.Trim(), StringComparison.OrdinalIgnoreCase))
         {
             HandleCorrectAnswer(wordEntity);
             return;
@@ -55,17 +56,21 @@ public class GameService
 
         HandleIncorrectAnswer(wordEntity);
     }
-
+    
     public Task PersistWordDifficultiesAsync()
     {
-        return _firebaseService.UpdateWordDifficultiesAsync(allEntities);
+        var wordsToPersist = activeWordEntity == null
+            ? currentEntities
+            : currentEntities.Append(activeWordEntity);
+
+        return _firebaseService.UpdateWordDifficultiesAsync(
+            wordsToPersist.DistinctBy(entity => entity.word, StringComparer.OrdinalIgnoreCase));
     }
-
-    /** Algorithm to prioritize the next word that should be displayed based on the word difficulty. TODO: Give a better function name */
-    private void Shuffle(){}
-
+    
     private void RequeueWord(WordEntity wordEntity)
     {
+        currentEntities.Remove(wordEntity);
+
         var index = currentEntities.FindIndex(entity => entity.difficulty < wordEntity.difficulty);
         if (index == -1)
         {
@@ -75,4 +80,13 @@ public class GameService
 
         currentEntities.Insert(index, wordEntity);
     }
+
+    private void ClearActiveWord(WordEntity wordEntity)
+    {
+        if (ReferenceEquals(activeWordEntity, wordEntity))
+        {
+            activeWordEntity = null;
+        }
+    }
+    
 }
