@@ -21,12 +21,12 @@ public class CalendarConsumerService : ConsumerService<MessageRequest>
     {
         Console.WriteLine($"[CalendarConsumer] Processing calendar message with content: {message.content}");
 
-        string modelResponse = await _mistralModelService.GetResponse(message.content,UseCases.UseCases.CALENDAR_EVENT);
+        object modelResponse = await _mistralModelService.GetResponse(message.content,UseCases.UseCases.CALENDAR_EVENT);
         Console.WriteLine($"[CalendarConsumer] Response from LLM: {modelResponse}");
 
         var response = new MessageRequest
         {
-            content = modelResponse,
+            content = modelResponse.ToString()!,
             message_id = message.message_id,
             chat_id = message.chat_id
         };

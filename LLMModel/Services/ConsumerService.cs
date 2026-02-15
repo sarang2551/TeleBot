@@ -5,11 +5,11 @@ namespace LLMModel.Services;
 
 using Confluent.Kafka;
 
-public abstract class ConsumerService<T>: BackgroundService where T : class
+public abstract class ConsumerService<T> : BackgroundService where T : BaseKafkaEntity<T>
 {
     protected readonly EnvSettings _configuration;
 
-    private readonly IConsumer<Null, string> _consumer;
+    private readonly IConsumer<Null, T> _consumer;
     
     protected readonly ProducerService<T> _producer;
     
@@ -26,7 +26,7 @@ public abstract class ConsumerService<T>: BackgroundService where T : class
             GroupId = GroupId,
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
-        _consumer = new ConsumerBuilder<Null, string>(consumerConfig).Build();
+        _consumer = new ConsumerBuilder<Null, T>(consumerConfig).SetValueDeserializer(new BaseKafkaEntity<T>()).Build();
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -54,8 +54,7 @@ public abstract class ConsumerService<T>: BackgroundService where T : class
                     {
                         Console.WriteLine($"[{GetType().Name}] Received message from topic " + message.Topic +
                                           " processing ...");
-                        var deserializedMessage = DeserializeMessage(message.Message.Value);
-                        await ProcessMessage(deserializedMessage);
+                        await ProcessMessage(message.Message.Value);
                     }
 
                 }
@@ -78,13 +77,6 @@ public abstract class ConsumerService<T>: BackgroundService where T : class
             Console.WriteLine($"[{GetType().Name}] Stopped at {DateTime.Now}");
             _consumer.Close();
         }
-    }
-    
-    protected virtual T DeserializeMessage(string messageValue)
-    {
-        var message = JsonConvert.DeserializeObject<T>(messageValue);
-        if (message == null) throw new Exception($"[{GetType().Name}] Deserialized null message");
-        return message;
     }
 
     protected abstract Task ProcessMessage(T message);

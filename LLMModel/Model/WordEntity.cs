@@ -1,19 +1,22 @@
 ﻿using System.Text.Json.Serialization;
+using LLMModel.Model.Interfaces;
 
 namespace LLMModel.Model;
 
-public class WordEntity : BaseKafkaEntity<WordEntity>
+public class WordEntity : BaseKafkaEntity<WordEntity>, ITeleMessage
 {
-    private int _id;
     [JsonInclude]
     public string definition = string.Empty;
     [JsonInclude]
     public string example = string.Empty;
     [JsonInclude]
     public string word = string.Empty;
-    [JsonInclude]
-    public int difficulty;
 
+    [JsonInclude] public int difficulty = 0;
+
+    [JsonInclude] public long chat_id { get; set; } = 0;
+    [JsonInclude] public int message_id { get; set; } = 0;
+    
     public bool IsValid =>
         !string.IsNullOrWhiteSpace(word) &&
         !string.IsNullOrWhiteSpace(definition) &&

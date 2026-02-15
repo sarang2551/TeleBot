@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using LLMModel.Model;
+using LLMModel.Services.Interfaces;
 using LLMModel.Services.UseCases;
 
-namespace LLMModel;
+namespace LLMModel.Services;
 
 using Mistral.SDK;
 using Mistral.SDK.DTOs;
@@ -9,7 +11,7 @@ using ChatMessage = Mistral.SDK.DTOs.ChatMessage;
 
 public class MistralModelService
 {
-    private readonly Dictionary<UseCases, List<ChatMessage>> _chatHistories = new();
+    private readonly Dictionary<UseCases.UseCases, List<ChatMessage>> _chatHistories = new();
     private readonly IReadOnlyList<IMistralUseCase> _useCases;
     private readonly string _apiKey;
 
@@ -27,7 +29,8 @@ public class MistralModelService
         }
     }
 
-    public async Task<string> GetResponse(string input, UseCases useCaseName)
+    // TODO: Refactor the MistralModelService to return custom classes from the GetResponse function instead of just a generic object
+    public async Task<object> GetResponse(string input, UseCases.UseCases useCaseName)
     {
         try
         {

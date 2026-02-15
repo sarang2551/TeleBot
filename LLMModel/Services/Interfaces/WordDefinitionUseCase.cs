@@ -1,16 +1,18 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using LLMModel.Model;
+using LLMModel.Services.Interfaces;
+using LLMModel.Services.UseCases;
 using Mistral.SDK.DTOs;
 
-namespace LLMModel.Services.UseCases;
+namespace LLMModel.Services.Interfaces;
 
-public class WordDefinitionUseCase : IMistralUseCase
+public class WordDefinitionUseCase : IMistralUseCase<WordEntity>
 {
     private static readonly Regex TriggerRegex = new(@"\b(define|definition|meaning of|what does|what's the meaning)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public UseCases Name => UseCases.WORD_DEFINITION;
+    public UseCases.UseCases Name => UseCases.UseCases.WORD_DEFINITION;
 
     public ChatMessage SystemMessage { get; } = new(ChatMessage.RoleEnum.System, $@"You are a dictionary assistant. Your task is to extract the target word from the user's request and return a concise definition and an example sentence in JSON format.
 
@@ -57,7 +59,12 @@ public class WordDefinitionUseCase : IMistralUseCase
         Type = ResponseFormat.ResponseFormatEnum.JSON
     };
 
-    public string ProcessOutput(string output)
+    object IMistralUseCase.ProcessOutput(string output)
+    {
+        return ProcessOutput(output);
+    }
+
+    public WordEntity ProcessOutput(string output)
     {
         using var document = JsonDocument.Parse(output);
         var root = document.RootElement;
@@ -77,6 +84,6 @@ public class WordDefinitionUseCase : IMistralUseCase
         }
 
         Console.WriteLine("[WordDefinitionUseCase]: Created definition for word: " + wordEntity.word);
-        return JsonSerializer.Serialize(wordEntity);
+        return wordEntity;
     }
 }

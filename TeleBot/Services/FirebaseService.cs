@@ -3,6 +3,7 @@ using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Mistral.SDK;
 using TeleBot.Model;
+using TeleBot.Model.Interfaces;
 
 namespace TeleBot.Services;
 
@@ -67,10 +68,10 @@ public class FirebaseService
     /**
      * <summary> Function that contacts the LLMModel to generate word sentence examples and definition </summary>
      */
-    public async Task AddWord(string word)
+    public async Task AddWord(WordEntity word)
     {
         // using kafka for a separate event trigger in the LLMModel. Fire and forget, the consumer service will handle updating the database
-        await _producerService.ProduceAsync(new WordEntity{word = word});
+        return;
     }
     
 }

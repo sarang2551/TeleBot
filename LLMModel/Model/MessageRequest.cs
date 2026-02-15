@@ -1,8 +1,10 @@
-﻿namespace LLMModel.Model;
+﻿using LLMModel.Model.Interfaces;
 
-public record MessageRequest 
+namespace LLMModel.Model;
+
+public class MessageRequest : BaseKafkaEntity<MessageRequest>, ITeleMessage
 {
     public required string content { get; set; }
-    public required string message_id { get; set; }
+    public required int message_id { get; set; }
     public required long chat_id { get; set; }
 }

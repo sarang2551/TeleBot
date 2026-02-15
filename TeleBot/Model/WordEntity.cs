@@ -1,7 +1,9 @@
 ﻿
+using TeleBot.Model.Interfaces;
+
 namespace TeleBot.Model;
 
-public record WordEntity
+public class WordEntity : ITeleMessage
 {
     private int  _id;
     public string definition;
@@ -9,4 +11,6 @@ public record WordEntity
     // word can be considered a unique entry in the database
     public string word;
     public int difficulty;
+    public required long chat_id { get; set; }
+    public required int message_id  { get; set; }
 }
