@@ -22,11 +22,12 @@ await kafkaInitializerService.init();
 
 var calendarProducer = new ProducerService<MessageRequest>(config);
 var wordGameProducer = new ProducerService<WordEntity>(config);
-var calendarConsumer = new CalendarConsumerService(config,calendarProducer);
-var wordGameConsumer = new WordGameConsumerService(config, wordGameProducer);
+var consumerCancellationToken = CancellationToken.None;
+var calendarTask = Task.Run(() => new CalendarConsumerService(config, calendarProducer).StartAsync(consumerCancellationToken));
+var wordGameTask = Task.Run(() => new WordGameConsumerService(config, wordGameProducer).StartAsync(consumerCancellationToken));
 
 // background thread tasks
-var consumerTasks = Task.WhenAll(calendarConsumer.StartAsync(CancellationToken.None), wordGameConsumer.StartAsync(CancellationToken.None));
+var consumerTasks = Task.WhenAll(calendarTask, wordGameTask);
 
 Console.WriteLine($"[LLM Model Service] Started at {DateTime.Now} \n");
 try
