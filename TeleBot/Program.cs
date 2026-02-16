@@ -27,7 +27,7 @@ var producerService = new ProducerService(config);
 var calendarConsumerService = new CalendarConsumerService(config, bot);
 var firebaseService = new FirebaseService(config);
 var gameConsumerService = new GameConsumerService(config, bot, firebaseService);
-var activeWordGames = new ConcurrentDictionary<long, GameService>();
+var activeWordGames = new ConcurrentDictionary<long, GameSession>();
 
 var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringComparer.OrdinalIgnoreCase)
 {
@@ -65,33 +65,48 @@ var baseHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringCo
     },
     ["/word"] = async (msg, args) =>
     {
-        if (activeWordGames.TryRemove(msg.Chat.Id, out var gameService))
+        if (activeWordGames.TryRemove(msg.Chat.Id, out var gameSession))
         {
-            await gameService.PersistWordDifficultiesAsync();
+            await gameSession.PersistWordDifficultiesAsync();
             await bot.SendMessage(msg.Chat, "Word game ended and difficulties were saved. Use /word to start again.");
             return;
         }
 
-        activeWordGames[msg.Chat.Id] = new GameService(firebaseService);
-        await bot.SendMessage(msg.Chat,
-            "Word game started. Use /addWord while the game is active. Send /word again to stop.");
-    }
-};
+        var newSession = new GameSession(new GameService(firebaseService));
+        activeWordGames[msg.Chat.Id] = newSession;
 
-var wordGameHandlers = new Dictionary<string, Func<Message, string?, Task>>(StringComparer.OrdinalIgnoreCase)
-{
+        try
+        {
+            await bot.SendMessage(msg.Chat, newSession.Start());
+        }
+        catch (InvalidOperationException)
+        {
+            activeWordGames.TryRemove(msg.Chat.Id, out _);
+            await bot.SendMessage(msg.Chat,
+                "Word game could not start because no words are available. Add words first and try again.");
+        }
+    },
     ["/addWord"] = async (msg, args) =>
     {
         var requestedWord = args ?? string.Empty;
         if (string.IsNullOrWhiteSpace(requestedWord))
         {
-            await bot.SendMessage(msg.Chat, "Please provide a word after /addWord."); 
+            await bot.SendMessage(msg.Chat, "Please provide a word after /addWord.");
             return;
         }
+
         // the addition of the word and the reply is handled by the consumer service
-        await producerService.ProduceAsync(new WordEntity{word = requestedWord,  chat_id = msg.Chat.Id, message_id = msg.MessageId, difficulty = 0, example = string.Empty});
+        await producerService.ProduceAsync(new WordEntity
+        {
+            word = requestedWord,
+            chat_id = msg.Chat.Id,
+            message_id = msg.MessageId,
+            difficulty = 0,
+            example = string.Empty
+        });
     }
 };
+
 // Fire and forget this task in the background thread
 _ = Task.Run(async () => await calendarConsumerService.StartAsync(CancellationToken.None));
 _ = Task.Run(async () => await gameConsumerService.StartAsync(CancellationToken.None));
@@ -117,12 +132,20 @@ async Task CustomOnMessageHandler(Message message,UpdateType updateType)
 
     if (!TryParseCommand(message, out var command, out var args))
     {
-        if (activeWordGames.ContainsKey(message.Chat.Id))
+        if (activeWordGames.TryGetValue(message.Chat.Id, out var gameSession))
         {
-            // word game: provide the meaning and example --> I guess the word
-            // if I guess the word wrong then the difficulty of the word increases
-            // more difficult words appear more frequently
-            await bot.SendMessage(message.Chat, "Word game input received. Keep going or use /word to stop.");
+            try
+            {
+                var response = gameSession.EvaluateAndBuildNextPrompt(message.Text);
+                await bot.SendMessage(message.Chat, response);
+            }
+            catch (InvalidOperationException)
+            {
+                await bot.SendMessage(message.Chat,
+                    "Word game ended because there are no words available right now. Use /word to start again.");
+                activeWordGames.TryRemove(message.Chat.Id, out _);
+            }
+
             return;
         }
 
@@ -130,21 +153,18 @@ async Task CustomOnMessageHandler(Message message,UpdateType updateType)
         return;
     }
 
+    if (activeWordGames.ContainsKey(message.Chat.Id) &&
+        !string.Equals(command, "/word", StringComparison.OrdinalIgnoreCase) &&
+        !string.Equals(command, "/addWord", StringComparison.OrdinalIgnoreCase))
+    {
+        await bot.SendMessage(message.Chat,
+            "Only /addWord is allowed during an active word game. Use /word to stop the game.");
+        return;
+    }
+
     if (baseHandlers.TryGetValue(command, out var handler))
     {
         await handler(message, args);
-        return;
-    }
-
-    if (activeWordGames.ContainsKey(message.Chat.Id) && wordGameHandlers.TryGetValue(command, out var wordGameHandler))
-    {
-        await wordGameHandler(message, args);
-        return;
-    }
-
-    if (string.Equals(command, "/addWord", StringComparison.OrdinalIgnoreCase))
-    {
-        await bot.SendMessage(message.Chat, "Start the word game with /word before using /addWord.");
         return;
     }
 
