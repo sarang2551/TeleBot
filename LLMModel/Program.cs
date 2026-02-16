@@ -1,4 +1,5 @@
 using LLMModel;
+using LLMModel.Model;
 using LLMModel.Services;
 using Newtonsoft.Json;
 using TeleBot.Services;
@@ -19,10 +20,14 @@ using var cts = new CancellationTokenSource();
 var kafkaInitializerService = new KafkaInitializerService(config);
 await kafkaInitializerService.init();
 
-var producer = new ProducerService(config);
-var consumer = new ConsumerService(config,producer);
-// background thread task
-var consumerTask = Task.Run(async () => await consumer.StartConsuming(CancellationToken.None));
+var calendarProducer = new ProducerService<MessageRequest>(config);
+var wordGameProducer = new ProducerService<WordEntity>(config);
+var consumerCancellationToken = CancellationToken.None;
+var calendarTask = Task.Run(() => new CalendarConsumerService(config, calendarProducer).StartAsync(consumerCancellationToken));
+var wordGameTask = Task.Run(() => new WordGameConsumerService(config, wordGameProducer).StartAsync(consumerCancellationToken));
+
+// background thread tasks
+var consumerTasks = Task.WhenAll(calendarTask, wordGameTask);
 
 Console.WriteLine($"[LLM Model Service] Started at {DateTime.Now} \n");
 try
@@ -37,7 +42,7 @@ catch (OperationCanceledException)
 // Wait for consumer to finish gracefully
 try
 {
-    await consumerTask;
+    await consumerTasks;
 }
 catch (OperationCanceledException)
 {

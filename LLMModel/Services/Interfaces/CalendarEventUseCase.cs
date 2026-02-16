@@ -1,17 +1,13 @@
 ﻿using LLMModel.Model;
+using LLMModel.Services.Interfaces;
 using Mistral.SDK.DTOs;
 using Newtonsoft.Json;
 
-namespace LLMModel.Services.UseCases;
+namespace LLMModel.Services.Interfaces;
 
-public class CalendarEventUseCase : IMistralUseCase
+public class CalendarEventUseCase : IMistralUseCase<CalendarEvent>
 {
-    public string Name => "calendar-event";
-
-    public bool CanHandle(string input)
-    {
-        return true;
-    }
+    public UseCases.UseCases Name => UseCases.UseCases.CALENDAR_EVENT;
 
     public ChatMessage SystemMessage { get; } = new(ChatMessage.RoleEnum.System, $@"You are a calendar event assistant. Your task is to extract event information from natural language text and convert it to a structured JSON format for creating Google Calendar events.
 
@@ -84,7 +80,7 @@ public class CalendarEventUseCase : IMistralUseCase
         Type = ResponseFormat.ResponseFormatEnum.JSON
     };
 
-    public string ProcessOutput(string output)
+    public CalendarEvent ProcessOutput(string output)
     {
         CalendarEvent parsedResponse = JsonConvert.DeserializeObject<CalendarEvent>(output)!;
         if (!parsedResponse.IsValid)
@@ -93,6 +89,11 @@ public class CalendarEventUseCase : IMistralUseCase
         }
 
         Console.WriteLine("CalendarEventUseCase: Created event with title: " + parsedResponse.Title);
-        return parsedResponse.ToString();
+        return parsedResponse;
+    }
+
+    object IMistralUseCase.ProcessOutput(string output)
+    {
+        return ProcessOutput(output);
     }
 }

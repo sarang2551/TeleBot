@@ -7,7 +7,7 @@ WORKDIR /src/telebot
 COPY TeleBot.csproj .
 RUN dotnet restore "TeleBot.csproj"
 
-# Copy the rest of the source (including appsettings.json)
+# Copy the rest of the source (including appsettings.json and firebase credentials)
 COPY . .
 RUN dotnet build "TeleBot.csproj" -c $BUILD_CONFIGURATION -o /app/build
 

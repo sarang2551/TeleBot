@@ -5,43 +5,42 @@ namespace LLMModel.Services;
 
 using Confluent.Kafka;
 
-public class ConsumerService : BackgroundService
+public abstract class ConsumerService<T> : BackgroundService where T : BaseKafkaEntity<T>
 {
-    private readonly EnvSettings _configuration;
+    protected readonly EnvSettings _configuration;
 
-    private readonly IConsumer<Null, MessageRequest> _consumer;
+    private readonly IConsumer<Null, T> _consumer;
     
-    private readonly ProducerService _producer;
+    protected readonly ProducerService<T> _producer;
+    
+    protected abstract string TopicName { get; }
+    protected abstract string GroupId { get; }
 
-    private readonly MistralModelService _mistralModelService;
-
-    public ConsumerService(EnvSettings configuration, ProducerService producer)
+    protected ConsumerService(EnvSettings configuration, ProducerService<T> producer)
     {
         _configuration = configuration;
         _producer = producer;
-        _mistralModelService = new(_configuration.Env.MISTRAL_API_KEY);
         var consumerConfig = new ConsumerConfig()
         {
             BootstrapServers = _configuration.Env.Kafka.BootstrapServers,
-            GroupId = "tele-message-topic",
+            GroupId = GroupId,
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
-        _consumer = new ConsumerBuilder<Null, MessageRequest>(consumerConfig).SetValueDeserializer(new MessageRequestDeserializer()).Build();
+        _consumer = new ConsumerBuilder<Null, T>(consumerConfig).SetValueDeserializer(new BaseKafkaEntity<T>()).Build();
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        Console.WriteLine($"[ConsumerService] Started at {DateTime.Now}");
+        Console.WriteLine($"[{GetType().Name}] Started at {DateTime.Now}");
         return StartConsuming(stoppingToken);
     }
-
-    /** Consumes a MessageRequest type message from the TeleBot service */
-    public async Task StartConsuming(CancellationToken token)
+    
+    private async Task StartConsuming(CancellationToken token)
     {
         try
         {
-            _consumer.Subscribe(_configuration.Env.Kafka.ConsumerTopic);
-            Console.WriteLine("[Consumer Service] Subscribed to topic " + _configuration.Env.Kafka.ConsumerTopic);
+            _consumer.Subscribe(TopicName);
+            Console.WriteLine($"[{GetType().Name}] Subscribed to topic " + TopicName);
             while (!token.IsCancellationRequested)
             {
                 try
@@ -49,42 +48,36 @@ public class ConsumerService : BackgroundService
                     var message = _consumer.Consume(token);
                     if (message == null)
                     {
-                        Console.WriteLine("[ConsumerService] received null message");
+                        Console.WriteLine($"[{GetType().Name}] received null message");
                     }
                     else
                     {
-                        Console.WriteLine("[ConsumerService] Received message from topic " + message.Topic +
+                        Console.WriteLine($"[{GetType().Name}] Received message from topic " + message.Topic +
                                           " processing ...");
-                        string modelResponse = await _mistralModelService.GetResponse(message.Message.Value.content);
-                        Console.WriteLine("[ConsumerService] Response from LLM: " + modelResponse);
-                        var response = new MessageRequest
-                        {
-                            content = modelResponse, message_id = message.Message.Value.message_id,
-                            chat_id = message.Message.Value.chat_id
-                        };
-                        await _producer.ProduceAsync(response);
-
+                        await ProcessMessage(message.Message.Value);
                     }
 
                 }
                 catch (ConsumeException e)
                 {
-                    Console.WriteLine("[ConsumerService] Consume error: " + e.Error.Reason);
+                    Console.WriteLine($"[{GetType().Name}] Consume error: " + e.Error.Reason);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("[ConsumerService] Error processing message " + e.StackTrace);
+                    Console.WriteLine($"[{GetType().Name}] Error processing message " + e.StackTrace);
                 }            
             }
         } catch (Exception ex)
         {
-            Console.WriteLine($"[Consumer Service] Fatal error in consumer: {ex.Message}");
-            Console.WriteLine($"[Consumer Service] StackTrace: {ex.StackTrace}");
+            Console.WriteLine($"[{GetType().Name}] Fatal error in consumer: {ex.Message}");
+            Console.WriteLine($"[{GetType().Name}] StackTrace: {ex.StackTrace}");
         }
         finally
         {
-            Console.WriteLine($"[ConsumerService] Stopped at {DateTime.Now}");
+            Console.WriteLine($"[{GetType().Name}] Stopped at {DateTime.Now}");
             _consumer.Close();
         }
     }
+
+    protected abstract Task ProcessMessage(T message);
 }

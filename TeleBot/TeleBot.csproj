@@ -10,6 +10,8 @@
 
     <ItemGroup>
       <PackageReference Include="Confluent.Kafka" Version="2.12.0" />
+      <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
+      <PackageReference Include="FirebaseDatabase.net" Version="5.0.0" />
       <PackageReference Include="Microsoft.Extensions.AI" Version="9.3.0-preview.1.25114.11" />
       <PackageReference Include="Microsoft.SemanticKernel" Version="1.38.0" />
       <PackageReference Include="Microsoft.SemanticKernel.Connectors.Ollama" Version="1.38.0-alpha" />
@@ -24,6 +26,10 @@
         <Link>.dockerignore</Link>
       </Content>
         <Content Include="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Include="credentials.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>

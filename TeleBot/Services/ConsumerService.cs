@@ -1,44 +1,48 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using TeleBot.Model;
 using Telegram.Bot;
 
 namespace TeleBot.Services;
 
-public class ConsumerService : BackgroundService
+public abstract class ConsumerService<T> : BackgroundService where T : class
 {
-        private readonly EnvSettings _configuration;
-        private IConsumer<Null,MessageRequest> _consumer;
-        private TelegramBotClient _botClient;
+    protected readonly EnvSettings _configuration;
+    protected readonly TelegramBotClient _botClient;
 
-        public ConsumerService(EnvSettings configuration, TelegramBotClient botClient)
+    private readonly IConsumer<Null, string> _consumer;
+
+    protected abstract string TopicName { get; }
+    protected abstract string GroupId { get; }
+
+    protected ConsumerService(EnvSettings configuration, TelegramBotClient botClient)
+    {
+        _configuration = configuration;
+        _botClient = botClient;
+
+        var consumerConfig = new ConsumerConfig
         {
-            _configuration = configuration;
-            _botClient = botClient;
-            var consumerConfig = new ConsumerConfig()
-            {
-                BootstrapServers = _configuration.Env.Kafka.BootstrapServers,
-                GroupId = "tele-message-topic",
-                AutoOffsetReset = AutoOffsetReset.Earliest
-            };
-            _consumer = new ConsumerBuilder<Null, MessageRequest>(consumerConfig).SetValueDeserializer(new MessageRequestDeserializer()).Build();
-        }
+            BootstrapServers = _configuration.Env.Kafka.BootstrapServers,
+            GroupId = GroupId,
+            AutoOffsetReset = AutoOffsetReset.Earliest
+        };
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            Console.WriteLine($"[ConsumerService] Started at {DateTime.Now}");
-            return StartConsuming(stoppingToken);
-        }
+        _consumer = new ConsumerBuilder<Null, string>(consumerConfig).Build();
+    }
 
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        Console.WriteLine($"[{GetType().Name}] Started at {DateTime.Now}");
+        return StartConsuming(stoppingToken);
+    }
 
-        /** Consumes a MessageRequest type message from the TeleBot service */
     public async Task StartConsuming(CancellationToken token)
     {
         try
         {
-            _consumer.Subscribe(_configuration.Env.Kafka.ConsumerTopic);
-            Console.WriteLine("[Consumer Service] Subscribed to topic " + _configuration.Env.Kafka.ConsumerTopic);
+            _consumer.Subscribe(TopicName);
+            Console.WriteLine($"[{GetType().Name}] Subscribed to topic {TopicName}");
+
             while (!token.IsCancellationRequested)
             {
                 try
@@ -46,30 +50,49 @@ public class ConsumerService : BackgroundService
                     var message = _consumer.Consume(token);
                     if (message == null)
                     {
-                        Console.WriteLine("[Consumer Service] received null message");
+                        Console.WriteLine($"[{GetType().Name}] received null message");
+                        continue;
                     }
-                    else
-                    {
-                        Console.WriteLine($"[Consumer Service] Consumed message content {message.Message.Value.content}");
-                        await _botClient.SendMessage(message.Message.Value.chat_id, message.Message.Value.content, cancellationToken:token);
-                    }
-                   
+
+                    Console.WriteLine($"[{GetType().Name}] Consumed message from topic {message.Topic}");
+                    var deserializedMessage = DeserializeMessage(message.Message.Value);
+                    await ProcessMessage(deserializedMessage, token);
+                }
+                catch (ConsumeException e)
+                {
+                    Console.WriteLine($"[{GetType().Name}] Consume error: {e.Error.Reason}");
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[Consumer Service] Error processing message: {e.Message}");
-                    
+                    Console.WriteLine($"[{GetType().Name}] Error processing message: {e.Message}");
                     if (e.InnerException != null)
                     {
-                        Console.WriteLine($"[Consumer Service]  Inner exception: {e.InnerException.Message}");
+                        Console.WriteLine($"[{GetType().Name}] Inner exception: {e.InnerException.Message}");
                     }
-                }            
+                }
             }
         }
         finally
         {
-            Console.WriteLine($"[Consumer Service] Stopped at {DateTime.Now}");
+            Console.WriteLine($"[{GetType().Name}] Stopped at {DateTime.Now}");
             _consumer.Close();
         }
     }
+
+    protected virtual T DeserializeMessage(string messageValue)
+    {
+        var message = JsonConvert.DeserializeObject<T>(messageValue);
+        if (message == null)
+        {
+            throw new Exception($"[{GetType().Name}] Deserialized null message");
+        }
+
+        return message;
+    }
+
+    protected abstract Task ProcessMessage(T message, CancellationToken token);
 }

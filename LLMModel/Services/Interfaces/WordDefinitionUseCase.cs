@@ -1,22 +1,18 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 using LLMModel.Model;
+using LLMModel.Services.Interfaces;
+using LLMModel.Services.UseCases;
 using Mistral.SDK.DTOs;
 
-namespace LLMModel.Services.UseCases;
+namespace LLMModel.Services.Interfaces;
 
-public class WordDefinitionUseCase : IMistralUseCase
+public class WordDefinitionUseCase : IMistralUseCase<WordEntity>
 {
     private static readonly Regex TriggerRegex = new(@"\b(define|definition|meaning of|what does|what's the meaning)\b",
         RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-    public string Name => "word-definition";
-
-    public bool CanHandle(string input)
-    {
-        return TriggerRegex.IsMatch(input);
-    }
+    public UseCases.UseCases Name => UseCases.UseCases.WORD_DEFINITION;
 
     public ChatMessage SystemMessage { get; } = new(ChatMessage.RoleEnum.System, $@"You are a dictionary assistant. Your task is to extract the target word from the user's request and return a concise definition and an example sentence in JSON format.
 
@@ -63,7 +59,12 @@ public class WordDefinitionUseCase : IMistralUseCase
         Type = ResponseFormat.ResponseFormatEnum.JSON
     };
 
-    public string ProcessOutput(string output)
+    object IMistralUseCase.ProcessOutput(string output)
+    {
+        return ProcessOutput(output);
+    }
+
+    public WordEntity ProcessOutput(string output)
     {
         using var document = JsonDocument.Parse(output);
         var root = document.RootElement;
@@ -82,16 +83,7 @@ public class WordDefinitionUseCase : IMistralUseCase
             throw new SystemException("Invalid definition data: missing required fields.");
         }
 
-        Console.WriteLine("WordDefinitionUseCase: Created definition for word: " + wordEntity.word);
-        return FormatDefinition(wordEntity);
-    }
-
-    private static string FormatDefinition(WordEntity wordEntity)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine($"Word: {wordEntity.word}");
-        sb.AppendLine($"Definition: {wordEntity.definition}");
-        sb.AppendLine($"Example: {wordEntity.example}");
-        return sb.ToString().Trim();
+        Console.WriteLine("[WordDefinitionUseCase]: Created definition for word: " + wordEntity.word);
+        return wordEntity;
     }
 }

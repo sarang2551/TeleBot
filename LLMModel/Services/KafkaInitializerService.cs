@@ -26,7 +26,9 @@ public class KafkaInitializerService(EnvSettings envSettings)
             var topicsToCreate = new List<string>
             {
                 _envSettings.Env.Kafka.ConsumerTopic,
-                _envSettings.Env.Kafka.ProducerTopic  
+                _envSettings.Env.Kafka.ProducerTopic,
+                _envSettings.Env.Wordgame.ConsumerTopic,
+                _envSettings.Env.Wordgame.ProducerTopic
             };
 
             var topicSpecifications = topicsToCreate
