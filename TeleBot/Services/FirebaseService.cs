@@ -1,58 +1,79 @@
 ﻿using Firebase.Database;
 using Firebase.Database.Query;
-using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
+using Newtonsoft.Json;
 using TeleBot.Model;
 
 namespace TeleBot.Services;
 
+
 public class FirebaseService
 {
-
     private readonly FirebaseClient _firebaseClient;
+
+    private class WordEntityDto
+    {
+        [JsonProperty("word")]
+        public string word { get; set; } = string.Empty;
+    
+        [JsonProperty("definition")]
+        public string definition { get; set; } = string.Empty;
+    
+        [JsonProperty("example")]
+        public string example { get; set; } = string.Empty;
+    
+        [JsonProperty("difficulty")]
+        public int difficulty { get; set; }
+    }
 
     public FirebaseService(EnvSettings config)
     {
         String databaseUrl = config.Env.Firebase.DatabaseAddress;
         String credentialsPath = Path.Combine(AppContext.BaseDirectory, config.Env.Firebase.CredentialsPath);
-        if (FirebaseApp.DefaultInstance == null)
-        {
-            FirebaseApp.Create(new AppOptions()
-            {
-                Credential = GoogleCredential.FromFile(credentialsPath)
-            });
-        }
-
-        _firebaseClient = new FirebaseClient(databaseUrl);
+        //var googleCredentials = CredentialFactory.FromFile<ServiceAccountCredential>(credentialsPath);
+        var googleCredentials = GoogleCredential
+            .FromFile(credentialsPath)
+            .CreateScoped(
+                "https://www.googleapis.com/auth/firebase.database",
+                "https://www.googleapis.com/auth/userinfo.email"
+            );
+        _firebaseClient = new FirebaseClient(databaseUrl, 
+            new FirebaseOptions{AuthTokenAsyncFactory = () => googleCredentials.UnderlyingCredential.GetAccessTokenForRequestAsync()});
     }
 
     public async Task<List<WordEntity>> GetWordsAsync()
     {
-        // uses the firebase connection to return all the words in the database (not space optimized)
         try
         {
-            var entities = await _firebaseClient
-                .Child("/")
-                .OnceAsync<WordEntity>();
+            var raw = await _firebaseClient
+                .Child("")
+                .OnceSingleAsync<List<WordEntityDto>>();
 
-            List<WordEntity> result = new List<WordEntity>();
-
-            foreach (var entity in entities)
+            if (raw == null)
             {
-                if (entity.Object != null)
-                {
-                    result.Add(entity.Object);
-                }
+                Console.WriteLine("[FirebaseService] Raw response is null");
+                return new List<WordEntity>();
             }
 
-            return result;
+            Console.WriteLine($"[FirebaseService] Retrieved {raw.Count} words");
+
+            return raw
+                .Select(e => new WordEntity
+                {
+                    word = e.word,
+                    definition = e.definition,
+                    example = e.example,
+                    difficulty = e.difficulty,
+                    chat_id = 0,
+                    message_id = 0
+                })
+                .ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error retrieving all entities : {ex.Message}");
+            Console.WriteLine($"[FirebaseService] Error retrieving words: {ex.Message}");
             return new List<WordEntity>();
         }
-
     }
 
     /**
@@ -72,9 +93,9 @@ public class FirebaseService
 
             // Database schema intentionally excludes transport metadata (chat_id, message_id).
             await _firebaseClient
-                .Child("/")
+                .Child(string.Empty)
                 .Child(firebaseKey)
-                .PutAsync(new
+                .PutAsync(new WordEntityDto
                 {
                     word = normalizedWord,
                     definition = word.definition,
@@ -93,7 +114,7 @@ public class FirebaseService
         try
         {
             var allDbWords = await _firebaseClient
-                .Child("/")
+                .Child(string.Empty)
                 .OnceAsync<WordEntity>();
 
             var keyByWord = allDbWords
