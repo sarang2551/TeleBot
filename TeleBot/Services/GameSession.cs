@@ -50,8 +50,14 @@ public class GameSession
 
     private static string BuildPrompt(WordEntity wordEntity)
     {
-        return "Guess the word from the clues below and reply with ONE word only.\n" +
-               $"Definition: {wordEntity.definition}\n" +
-               $"Example: {wordEntity.example}";
+        var prompt = "Guess the word from the clues below and reply with ONE word only.\n" +
+                     $"Definition: {wordEntity.definition}\n";
+        if (wordEntity.difficulty >= 3)
+        {
+            var blank = new string('_', wordEntity.word.Length); 
+            prompt += $"Example: {wordEntity.example.Replace(wordEntity.word, blank)}";
+        }
+
+        return prompt;
     }
 }
