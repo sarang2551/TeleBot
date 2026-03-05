@@ -55,7 +55,7 @@ public class FirebaseService
     {
         try
         {
-            var response = await SendRequestAsync(HttpMethod.Get, string.Empty);
+            using var response = await SendRequestAsync(HttpMethod.Get, string.Empty);
             var payload = await response.Content.ReadAsStringAsync();
 
             if (string.IsNullOrWhiteSpace(payload) || payload == "null")
@@ -116,7 +116,7 @@ public class FirebaseService
                 difficulty = word.difficulty
             };
 
-            await SendRequestAsync(HttpMethod.Put, firebaseKey, dto);
+            using var _ = await SendRequestAsync(HttpMethod.Put, firebaseKey, dto);
         }
         catch (Exception ex)
         {
@@ -140,7 +140,7 @@ public class FirebaseService
                 return;
             }
 
-            await SendRequestAsync(new HttpMethod("PATCH"), string.Empty, updates);
+            using var _ = await SendRequestAsync(HttpMethod.Patch, string.Empty, updates);
         }
         catch (Exception ex)
         {
@@ -151,9 +151,10 @@ public class FirebaseService
     private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod method, string path, object? body = null)
     {
         var token = await _googleCredential.UnderlyingCredential.GetAccessTokenForRequestAsync();
-        var endpoint = string.IsNullOrWhiteSpace(path)
+        var encodedPath = EncodePath(path);
+        var endpoint = string.IsNullOrWhiteSpace(encodedPath)
             ? $"{_databaseUrl}/.json"
-            : $"{_databaseUrl}/{path}.json";
+            : $"{_databaseUrl}/{encodedPath}.json";
 
         using var request = new HttpRequestMessage(method, endpoint);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -169,4 +170,17 @@ public class FirebaseService
         return response;
     }
 
+    private static string EncodePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            return string.Empty;
+        }
+
+        var segments = path
+            .Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .Select(Uri.EscapeDataString);
+
+        return string.Join("/", segments);
+    }
 }
