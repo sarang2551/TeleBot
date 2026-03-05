@@ -38,7 +38,7 @@ public class GameSession
         _gameService.Evaluate(answer, answeredWord);
 
         _currentWord = _gameService.GetNextWord();
-        var feedback = isCorrect ? "✅ Correct!" : $"❌ Incorrect. The correct word was '{answeredWord.word}'.";
+        var feedback = isCorrect ? $"✅ Correct! Score: {_gameService.Score}/{_gameService.GetTotalWords()}" : $"❌ Incorrect. The correct word was '{answeredWord.word}'.";
 
         return $"{feedback}\n\n{BuildPrompt(_currentWord)}";
     }

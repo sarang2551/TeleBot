@@ -4,9 +4,11 @@ namespace TeleBot.Services;
 
 public class GameService
 {
-    private int Score { get; set; }
+    public int Score { get; set; }
+
     /** Stores the entities relevant to the game session. Adding words to the database will not update the current game session entities. */
     private readonly List<WordEntity> currentEntities;
+
     private readonly FirebaseService _firebaseService;
     private WordEntity? activeWordEntity;
 
@@ -16,7 +18,7 @@ public class GameService
         var entities = _firebaseService.GetWordsAsync().GetAwaiter().GetResult();
         currentEntities = entities.OrderByDescending(entity => entity.difficulty).ToList();
     }
-    
+
     public WordEntity GetNextWord()
     {
         if (currentEntities.Count == 0)
@@ -30,7 +32,7 @@ public class GameService
         return nextWord;
     }
 
-    public void HandleIncorrectAnswer(WordEntity wordEntity)
+    private void HandleIncorrectAnswer(WordEntity wordEntity)
     {
         Score = Math.Max(Score - 1, 0);
         wordEntity.difficulty++;
@@ -38,7 +40,7 @@ public class GameService
         ClearActiveWord(wordEntity);
     }
 
-    public void HandleCorrectAnswer(WordEntity wordEntity)
+    private void HandleCorrectAnswer(WordEntity wordEntity)
     {
         Score++;
         wordEntity.difficulty = 0;
@@ -56,7 +58,7 @@ public class GameService
 
         HandleIncorrectAnswer(wordEntity);
     }
-    
+
     public Task PersistWordDifficultiesAsync()
     {
         var wordsToPersist = activeWordEntity == null
@@ -66,7 +68,7 @@ public class GameService
         return _firebaseService.UpdateWordDifficultiesAsync(
             wordsToPersist.DistinctBy(entity => entity.word, StringComparer.OrdinalIgnoreCase));
     }
-    
+
     private void RequeueWord(WordEntity wordEntity)
     {
         currentEntities.Remove(wordEntity);
@@ -88,5 +90,10 @@ public class GameService
             activeWordEntity = null;
         }
     }
-    
+
+    public int GetTotalWords()
+    {
+        return currentEntities.Count;
+    }
+
 }
