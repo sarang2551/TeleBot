@@ -1,7 +1,9 @@
-﻿using Firebase.Database;
-using Firebase.Database.Query;
+﻿using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net.Http.Headers;
+using System.Text;
 using TeleBot.Model;
 
 namespace TeleBot.Services;
@@ -9,55 +11,70 @@ namespace TeleBot.Services;
 
 public class FirebaseService
 {
-    private readonly FirebaseClient _firebaseClient;
+    private readonly HttpClient _httpClient;
+    private readonly string _databaseUrl;
+    private readonly GoogleCredential _googleCredential;
 
     private class WordEntityDto
     {
         [JsonProperty("word")]
         public string word { get; set; } = string.Empty;
-    
+
         [JsonProperty("definition")]
         public string definition { get; set; } = string.Empty;
-    
+
         [JsonProperty("example")]
         public string example { get; set; } = string.Empty;
-    
+
         [JsonProperty("difficulty")]
         public int difficulty { get; set; }
     }
 
     public FirebaseService(EnvSettings config)
     {
-        String databaseUrl = config.Env.Firebase.DatabaseAddress;
-        String credentialsPath = Path.Combine(AppContext.BaseDirectory, config.Env.Firebase.CredentialsPath);
-        //var googleCredentials = CredentialFactory.FromFile<ServiceAccountCredential>(credentialsPath);
-        var googleCredentials = GoogleCredential
+        _databaseUrl = config.Env.Firebase.DatabaseAddress.TrimEnd('/');
+        var credentialsPath = Path.Combine(AppContext.BaseDirectory, config.Env.Firebase.CredentialsPath);
+
+        _googleCredential = GoogleCredential
             .FromFile(credentialsPath)
             .CreateScoped(
                 "https://www.googleapis.com/auth/firebase.database",
                 "https://www.googleapis.com/auth/userinfo.email"
             );
-        _firebaseClient = new FirebaseClient(databaseUrl, 
-            new FirebaseOptions{AuthTokenAsyncFactory = () => googleCredentials.UnderlyingCredential.GetAccessTokenForRequestAsync()});
+
+        FirebaseApp.Create(new AppOptions
+        {
+            Credential = _googleCredential,
+            DatabaseUrl = new Uri(_databaseUrl)
+        }, $"telebot-{Guid.NewGuid():N}");
+
+        _httpClient = new HttpClient();
     }
 
     public async Task<List<WordEntity>> GetWordsAsync()
     {
         try
         {
-            var raw = await _firebaseClient
-                .Child("")
-                .OnceSingleAsync<List<WordEntityDto>>();
+            var response = await SendRequestAsync(HttpMethod.Get, string.Empty);
+            var payload = await response.Content.ReadAsStringAsync();
 
-            if (raw == null)
+            if (string.IsNullOrWhiteSpace(payload) || payload == "null")
             {
                 Console.WriteLine("[FirebaseService] Raw response is null");
                 return new List<WordEntity>();
             }
 
-            Console.WriteLine($"[FirebaseService] Retrieved {raw.Count} words");
+            var token = JToken.Parse(payload);
+            var words = token.Type switch
+            {
+                JTokenType.Array => token.ToObject<List<WordEntityDto>>() ?? new List<WordEntityDto>(),
+                JTokenType.Object => token.ToObject<Dictionary<string, WordEntityDto>>()?.Values.ToList() ?? new List<WordEntityDto>(),
+                _ => new List<WordEntityDto>()
+            };
 
-            return raw
+            Console.WriteLine($"[FirebaseService] Retrieved {words.Count} words");
+
+            return words
                 .Select(e => new WordEntity
                 {
                     word = e.word,
@@ -91,17 +108,15 @@ public class FirebaseService
             var normalizedWord = word.word.Trim();
             var firebaseKey = normalizedWord.ToLowerInvariant();
 
-            // Database schema intentionally excludes transport metadata (chat_id, message_id).
-            await _firebaseClient
-                .Child(string.Empty)
-                .Child(firebaseKey)
-                .PutAsync(new WordEntityDto
-                {
-                    word = normalizedWord,
-                    definition = word.definition,
-                    example = word.example,
-                    difficulty = word.difficulty
-                });
+            var dto = new WordEntityDto
+            {
+                word = normalizedWord,
+                definition = word.definition,
+                example = word.example,
+                difficulty = word.difficulty
+            };
+
+            await SendRequestAsync(HttpMethod.Put, firebaseKey, dto);
         }
         catch (Exception ex)
         {
@@ -113,38 +128,45 @@ public class FirebaseService
     {
         try
         {
-            var allDbWords = await _firebaseClient
-                .Child(string.Empty)
-                .OnceAsync<WordEntity>();
+            var updates = wordEntities
+                .Where(entity => !string.IsNullOrWhiteSpace(entity.word))
+                .ToDictionary(
+                    entity => $"{entity.word.Trim().ToLowerInvariant()}/difficulty",
+                    entity => (object)entity.difficulty,
+                    StringComparer.OrdinalIgnoreCase);
 
-            var keyByWord = allDbWords
-                .Where(entry => !string.IsNullOrWhiteSpace(entry.Object.word))
-                .GroupBy(entry => entry.Object.word, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(group => group.Key, group => group.First().Key, StringComparer.OrdinalIgnoreCase);
-
-            foreach (var wordEntity in wordEntities)
+            if (updates.Count == 0)
             {
-                if (string.IsNullOrWhiteSpace(wordEntity.word))
-                {
-                    continue;
-                }
-
-                if (!keyByWord.TryGetValue(wordEntity.word, out var key))
-                {
-                    continue;
-                }
-
-                await _firebaseClient
-                    .Child("/")
-                    .Child(key)
-                    .Child(nameof(WordEntity.difficulty))
-                    .PutAsync(wordEntity.difficulty);
+                return;
             }
+
+            await SendRequestAsync(new HttpMethod("PATCH"), string.Empty, updates);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error updating word difficulties : {ex.Message}");
         }
+    }
+
+    private async Task<HttpResponseMessage> SendRequestAsync(HttpMethod method, string path, object? body = null)
+    {
+        var token = await _googleCredential.UnderlyingCredential.GetAccessTokenForRequestAsync();
+        var endpoint = string.IsNullOrWhiteSpace(path)
+            ? $"{_databaseUrl}/.json"
+            : $"{_databaseUrl}/{path}.json";
+
+        using var request = new HttpRequestMessage(method, endpoint);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        if (body != null)
+        {
+            var json = JsonConvert.SerializeObject(body);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        var response = await _httpClient.SendAsync(request);
+        response.EnsureSuccessStatusCode();
+        return response;
     }
 
 }
